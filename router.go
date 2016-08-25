@@ -6,11 +6,11 @@ import (
 )
 
 func RouterInit() {
-    // iris.StaticServe("./static/", "static")
-    
     iris.UseTemplate(html.New(html.Config {
-        Layout: "default-layout.html",
+        Layout: "layout0.html",
     }))
+    
+    iris.StaticServe("./static/", "static")
     
     iris.Get("/", func(c *iris.Context) {
         c.Render("index.html", struct{
