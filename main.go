@@ -1,8 +1,10 @@
-package niec
+package main
 
-import "fmt"
+import (
+	"github.com/kataras/iris"
+)
 
 func main() {
-	fmt.Println("Hiha")
-	Pt()
+	RouterInit()
+	iris.Listen(":8080")
 }
