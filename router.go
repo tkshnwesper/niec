@@ -4,11 +4,18 @@ import (
     "github.com/kataras/iris"
     "github.com/iris-contrib/template/html"
     "fmt"
+    // "encoding/json"
+    // "github.com/iris-contrib/template/amber"
 )
 
 type ErrorContainer struct {
     Title string
     Message string
+}
+
+type Field struct {
+    Type string
+    Name string
 }
 
 func buildErrorPage(c *iris.Context, err ErrorContainer) {
@@ -32,8 +39,8 @@ func InitErrorPages() {
     })
     
     errTypes := map[string]ErrorContainer {
-        "blank-field-error": ErrorContainer {
-            "Blank Field(s) Error",
+        "blank-field": ErrorContainer {
+            "Blank Field(s)",
             "Kindly enter all the required fields.",
         },
     }
@@ -49,8 +56,11 @@ func RouterInit() {
     iris.UseTemplate(html.New(html.Config {
         Layout: "layout0.html",
     }))
+    // iris.UseTemplate(amber.New()).Directory("./templates", ".html")
     
     iris.StaticServe("./static/", "static")
+    
+    InitErrorPages()
     
     iris.Get("/", func(c *iris.Context) {
         c.Render("index.html", struct{
@@ -74,15 +84,9 @@ func RouterInit() {
         if res, email, password := getCreds(c); res {
             c.Session().Set("email", email)
             c.Session().Set("password", password)
-            c.Render("sign.up.next.html", struct{
-                Title string
-                Action string
-            }{
-                "Niec :: SignUp",
-                "SignUp",
-            })
+            c.RedirectTo("signup-next")
         } else {
-            c.RedirectTo("blank-field-error")
+            c.RedirectTo("blank-field")
         }
     })
     
@@ -95,9 +99,26 @@ func RouterInit() {
             "SignIn",
         })
     })("signin")
+    
+    iris.Get("/sign/up/next", func(c *iris.Context) {
+        fields := []Field {
+            {
+                "text",
+                "Name",
+            },
+        }
+        c.Render("sign.up.next.html", struct{
+            Title string
+            Fields []Field
+        }{
+            "Niec :: SignUp - Next",
+            fields,
+        })
+    })("signup-next")
 }
 
 func getCreds(c *iris.Context) (bool, string, string) {
+    c.Session().Clear()
     email := c.FormValueString("email")
     password := c.FormValueString("password")
     if email == "" || password == "" {

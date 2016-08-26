@@ -1,0 +1,27 @@
+<div class="container">
+    <div class="page-header">
+        <h1>SignUp - Next</h1>
+    </div>
+    <div class="col-xs-12 col-sm-4 col-sm-offset-4">
+        <div class="row">
+            <form method="POST">
+                {{ range $field := .Fields }}
+                <div class="form-group">
+                    <label class="sr-only" for="{{ $field.Name }}">{{ $field.Name }}</label>
+                    <input id="{{ $field.Name }}" type="{{ $field.Type }}" class="form-control bg-primary" placeholder="{{ $field.Name }}" name="{{ $field.Name }}">
+                </div>
+                {{ end }}
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <input type="submit" class="btn btn-default btn-block" value="Skip">
+                        </div>
+                        <div class="col-xs-6">
+                            <input type="submit" class="btn btn-default btn-block" value="Next">
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
