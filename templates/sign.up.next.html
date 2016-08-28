@@ -7,19 +7,15 @@
             <form method="POST">
                 {{ range $field := .Fields }}
                 <div class="form-group">
-                    <label class="sr-only" for="{{ $field.Name }}">{{ $field.Name }}</label>
-                    <input id="{{ $field.Name }}" type="{{ $field.Type }}" class="form-control bg-primary" placeholder="{{ $field.Name }}" name="{{ $field.Name }}">
+                    <label class="sr-only" for="{{ $field.Name }}">{{ $field.Placeholder }}</label>
+                    <input id="{{ $field.Name }}" type="{{ $field.Type }}" class="form-control bg-primary" placeholder="{{ $field.Placeholder }}" name="{{ $field.Name }}">
                 </div>
                 {{ end }}
                 <div class="form-group">
-                    <div class="row">
-                        <div class="col-xs-6">
-                            <input type="submit" class="btn btn-default btn-block" value="Skip">
-                        </div>
-                        <div class="col-xs-6">
-                            <input type="submit" class="btn btn-default btn-block" value="Next">
-                        </div>
-                    </div>
+                    <textarea class="form-control" rows="3" placeholder="Enter a short bio (Optional)" name="bio"></textarea>
+                </div>
+                <div class="form-group">
+                    <input type="submit" class="btn btn-default btn-block" value="Next">
                 </div>
             </form>
         </div>

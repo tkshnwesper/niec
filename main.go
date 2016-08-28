@@ -6,5 +6,6 @@ import (
 
 func main() {
 	RouterInit()
+	InitDB()
 	iris.Listen(":8081")
 }

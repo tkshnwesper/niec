@@ -2,10 +2,10 @@ package main
 
 import (
     "github.com/kataras/iris"
-    "github.com/iris-contrib/template/html"
+    HTML "github.com/iris-contrib/template/html"
     "fmt"
-    // "encoding/json"
-    // "github.com/iris-contrib/template/amber"
+    "html"
+    "crypto/md5"
 )
 
 type ErrorContainer struct {
@@ -16,6 +16,7 @@ type ErrorContainer struct {
 type Field struct {
     Type string
     Name string
+    Placeholder string
 }
 
 func buildErrorPage(c *iris.Context, err ErrorContainer) {
@@ -43,6 +44,18 @@ func InitErrorPages() {
             "Blank Field(s)",
             "Kindly enter all the required fields.",
         },
+        "password-mismatch": ErrorContainer {
+            "Password Mismatch",
+            "Your passwords don't match, please try again.",
+        },
+        "email-already-exists": ErrorContainer {
+            "Email Already Exists",
+            "This email address already exists on our database.",
+        },
+        "username-already-taken": ErrorContainer {
+            "Username already taken",
+            "This username has already been taken by another user.",
+        },
     }
     
     for s, ec := range errTypes {
@@ -53,10 +66,9 @@ func InitErrorPages() {
 }
 
 func RouterInit() {
-    iris.UseTemplate(html.New(html.Config {
+    iris.UseTemplate(HTML.New(HTML.Config {
         Layout: "layout0.html",
     }))
-    // iris.UseTemplate(amber.New()).Directory("./templates", ".html")
     
     iris.StaticServe("./static/", "static")
     
@@ -82,9 +94,13 @@ func RouterInit() {
     
     iris.Post("/sign/up", func(c *iris.Context) {
         if res, email, password := getCreds(c); res {
-            c.Session().Set("email", email)
-            c.Session().Set("password", password)
-            c.RedirectTo("signup-next")
+            if CheckDuplicateEmail(email) {
+                c.RedirectTo("email-already-exists")
+            } else {
+                c.Session().Set("email", email)
+                c.Session().Set("password", password)
+                c.RedirectTo("signup-next")
+            }
         } else {
             c.RedirectTo("blank-field")
         }
@@ -104,7 +120,18 @@ func RouterInit() {
         fields := []Field {
             {
                 "text",
-                "Name",
+                "username",
+                "Username",
+            },
+            {
+                "password",
+                "retype",
+                "Retype password",
+            },
+            {
+                "url",
+                "dp",
+                "Display picture URL (Optional)",
             },
         }
         c.Render("sign.up.next.html", struct{
@@ -115,6 +142,27 @@ func RouterInit() {
             fields,
         })
     })("signup-next")
+    
+    iris.Post("/sign/up/next", func(c *iris.Context) {
+        bio := html.EscapeString(c.FormValueString("bio"))
+        username := html.EscapeString(c.FormValueString("username"))
+        dp := html.EscapeString(c.FormValueString("dp"))
+        retype := html.EscapeString(c.FormValueString("retype"))
+        
+        if c.Session().GetString("password") != retype {
+            c.RedirectTo("password-mismatch")
+        } else if CheckDuplicateUsername(username) {
+            c.RedirectTo("username-already-taken")
+        } else {
+            InsertUser(
+                c.Session().GetString("email"), 
+                fmt.Sprintf("%x", md5.Sum([]byte(retype))), 
+                username, 
+                dp, 
+                bio,
+            )
+        }
+    })
 }
 
 func getCreds(c *iris.Context) (bool, string, string) {

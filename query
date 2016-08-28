@@ -1,0 +1,3 @@
+create database niec;
+
+create table user( id bigint primary key auto_increment, username varchar(25) unique not null, email varchar(255) character set latin1 collate latin1_swedish_ci unique not null, password varchar(255), bio text, dp varchar(255));
