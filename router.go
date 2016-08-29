@@ -19,6 +19,10 @@ type Field struct {
     Placeholder string
 }
 
+func (ec ErrorContainer) Serve(c *iris.Context) {
+    buildErrorPage(c, ec)
+}
+
 func buildErrorPage(c *iris.Context, err ErrorContainer) {
     c.Render("error.html", struct {
         Title string
@@ -32,6 +36,8 @@ func buildErrorPage(c *iris.Context, err ErrorContainer) {
 }
     
 func InitErrorPages() {
+    fmt.Println("Initializing error pages")
+    
     iris.OnError(iris.StatusNotFound, func(c *iris.Context) {
         buildErrorPage(c, ErrorContainer {
             "404",
@@ -56,11 +62,20 @@ func InitErrorPages() {
             "Username already taken",
             "This username has already been taken by another user.",
         },
+        "invalid-credentials": ErrorContainer {
+            "Invalid Credentials",
+            "The email or password that you entered are not valid.",
+        },
+        "user-does-not-exist": ErrorContainer {
+            "User does not exist",
+            "The user with that email address does not exist on our database.",
+        },
     }
     
     for s, ec := range errTypes {
-        iris.Get(fmt.Sprintf("/error/%v", s), func(c *iris.Context) {
-            buildErrorPage(c, ec)
+        iris.Handle("GET", fmt.Sprintf("/error/%v", s), ErrorContainer {
+            Title: ec.Title,
+            Message: ec.Message,
         })(s)
     }
 }
@@ -69,6 +84,8 @@ func RouterInit() {
     iris.UseTemplate(HTML.New(HTML.Config {
         Layout: "layout0.html",
     }))
+    
+    fmt.Println("initializing router")
     
     iris.StaticServe("./static/", "static")
     
@@ -94,7 +111,7 @@ func RouterInit() {
     
     iris.Post("/sign/up", func(c *iris.Context) {
         if res, email, password := getCreds(c); res {
-            if CheckDuplicateEmail(email) {
+            if CheckEmailExists(email) {
                 c.RedirectTo("email-already-exists")
             } else {
                 c.Session().Set("email", email)
@@ -115,6 +132,22 @@ func RouterInit() {
             "SignIn",
         })
     })("signin")
+    
+    iris.Post("/sign/in", func(c *iris.Context) {
+        if res, email, password := getCreds(c); res {
+            if CheckEmailExists(email) {
+                if VerifyCreds(email, password) {
+                    c.Session().Set("username", GetUsername(email))
+                } else {
+                    c.RedirectTo("invalid-credentials")
+                }
+            } else {
+                c.RedirectTo("user-does-not-exist")
+            }
+        } else {
+            c.RedirectTo("blank-field")
+        }
+    })
     
     iris.Get("/sign/up/next", func(c *iris.Context) {
         fields := []Field {
@@ -151,7 +184,7 @@ func RouterInit() {
         
         if c.Session().GetString("password") != retype {
             c.RedirectTo("password-mismatch")
-        } else if CheckDuplicateUsername(username) {
+        } else if CheckUsernameExists(username) {
             c.RedirectTo("username-already-taken")
         } else {
             InsertUser(
