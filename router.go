@@ -6,6 +6,7 @@ import (
     "fmt"
     "html"
     "crypto/md5"
+    "github.com/dchest/captcha"
 )
 
 type ErrorContainer struct {
@@ -36,12 +37,18 @@ func buildErrorPage(c *iris.Context, err ErrorContainer) {
 }
     
 func InitErrorPages() {
-    fmt.Println("Initializing error pages")
-    
+
     iris.OnError(iris.StatusNotFound, func(c *iris.Context) {
         buildErrorPage(c, ErrorContainer {
             "404",
             "Sorry! The page you requested could not be found.",
+        })
+    })
+    
+    iris.OnError(iris.StatusInternalServerError, func(c *iris.Context) {
+        buildErrorPage(c, ErrorContainer {
+            "503",
+            "Our server encountered an internal server error.",
         })
     })
     
@@ -70,6 +77,10 @@ func InitErrorPages() {
             "User does not exist",
             "The user with that email address does not exist on our database.",
         },
+        "incorrect-captcha": ErrorContainer {
+            "Incorrect Captcha",
+            "The captcha that you entered was not correct.",
+        },
     }
     
     for s, ec := range errTypes {
@@ -85,8 +96,6 @@ func RouterInit() {
         Layout: "layout0.html",
     }))
     
-    fmt.Println("initializing router")
-    
     iris.StaticServe("./static/", "static")
     
     InitErrorPages()
@@ -100,13 +109,7 @@ func RouterInit() {
     })("landing")
     
     iris.Get("/sign/up", func(c *iris.Context) {
-        c.Render("sign.html", struct{
-            Title string
-            Action string
-        }{
-            "Niec :: SignUp",
-            "SignUp",
-        })
+        renderSign(c, "Niec :: SignUp", "SignUp")
     })("signup")
     
     iris.Post("/sign/up", func(c *iris.Context) {
@@ -124,13 +127,7 @@ func RouterInit() {
     })
     
     iris.Get("/sign/in", func(c *iris.Context) {
-        c.Render("sign.html", struct{
-            Title string
-            Action string
-        }{
-            "Niec :: SignIn",
-            "SignIn",
-        })
+        renderSign(c, "Niec :: SignIn", "SignIn")
     })("signin")
     
     iris.Post("/sign/in", func(c *iris.Context) {
@@ -150,6 +147,8 @@ func RouterInit() {
     })
     
     iris.Get("/sign/up/next", func(c *iris.Context) {
+        capid := captcha.New()
+        c.Session().Set("capid", capid)
         fields := []Field {
             {
                 "text",
@@ -170,9 +169,11 @@ func RouterInit() {
         c.Render("sign.up.next.html", struct{
             Title string
             Fields []Field
+            CapID string
         }{
             "Niec :: SignUp - Next",
             fields,
+            capid,
         })
     })("signup-next")
     
@@ -180,22 +181,32 @@ func RouterInit() {
         bio := html.EscapeString(c.FormValueString("bio"))
         username := html.EscapeString(c.FormValueString("username"))
         dp := html.EscapeString(c.FormValueString("dp"))
-        retype := html.EscapeString(c.FormValueString("retype"))
+        retype := c.FormValueString("retype")
+        cap := c.FormValueString("captcha")
         
         if c.Session().GetString("password") != retype {
             c.RedirectTo("password-mismatch")
         } else if CheckUsernameExists(username) {
             c.RedirectTo("username-already-taken")
+        } else if c.Session().GetString("email") == "" {
+            c.EmitError(iris.StatusInternalServerError)
+        } else if !captcha.VerifyString(c.Session().Get("capid").(string), cap) {
+            c.RedirectTo("incorrect-captcha")
         } else {
-            InsertUser(
-                c.Session().GetString("email"), 
-                fmt.Sprintf("%x", md5.Sum([]byte(retype))), 
+            if !InsertUser(
+                c.Session().GetString("email"),
+                fmt.Sprintf("%x", md5.Sum([]byte(retype))),
                 username, 
                 dp, 
                 bio,
-            )
+            ) {
+                c.EmitError(iris.StatusInternalServerError)
+            }
         }
     })
+    
+    var capHandler = captcha.Server(captcha.StdWidth, captcha.StdHeight)
+    iris.Get("/captcha/*id", iris.ToHandlerFunc(capHandler))("captcha")
 }
 
 func getCreds(c *iris.Context) (bool, string, string) {
@@ -206,4 +217,28 @@ func getCreds(c *iris.Context) (bool, string, string) {
         return false, "", ""
     }
     return true, email, password
+}
+
+func renderSign(c *iris.Context, title, action string) {
+    fields := []Field {
+        {
+            "email",
+            "email",
+            "Email Address",
+        },
+        {
+            "password",
+            "password",
+            "Password",
+        },
+    }
+    c.Render("sign.html", struct{
+        Title string
+        Action string
+        Fields []Field
+    }{
+        title,
+        action,
+        fields,
+    })
 }
