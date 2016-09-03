@@ -7,5 +7,5 @@ import (
 func main() {
 	RouterInit()
 	InitDB()
-	iris.Listen("192.168.1.4:8081")
+	iris.Listen("192.168.1.2:8081")
 }

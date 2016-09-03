@@ -7,6 +7,10 @@ import (
     "html"
     "crypto/md5"
     "github.com/dchest/captcha"
+    "github.com/microcosm-cc/bluemonday"
+    "github.com/russross/blackfriday"
+    "html/template"
+    "io/ioutil"
 )
 
 type ErrorContainer struct {
@@ -35,6 +39,10 @@ func buildErrorPage(c *iris.Context, err ErrorContainer) {
         err.Message,
     })
 }
+
+func getMarkdown(s string) string {
+    return bluemonday.UGCPolicy().Sanitize(string(blackfriday.MarkdownCommon([]byte(s))))
+}
     
 func InitErrorPages() {
 
@@ -49,6 +57,13 @@ func InitErrorPages() {
         buildErrorPage(c, ErrorContainer {
             "503",
             "Our server encountered an internal server error.",
+        })
+    })
+    
+    iris.OnError(iris.StatusForbidden, func(c *iris.Context) {
+        buildErrorPage(c, ErrorContainer {
+            "403",
+            "Please sign in first.",
         })
     })
     
@@ -107,6 +122,16 @@ func RouterInit() {
             "Welcome to Niec!",
         })
     })("landing")
+    
+    iris.Get("/learn-more", func(c *iris.Context) {
+        c.Render("learn.more.html", struct {
+            Title string
+            Text template.HTML
+        } {
+            "Learn more",
+            template.HTML(getMarkdown(readMD("learn.more.md"))),
+        })
+    })("learn-more")
     
     iris.Get("/sign/up", func(c *iris.Context) {
         renderSign(c, "Niec :: SignUp", "SignUp")
@@ -207,6 +232,66 @@ func RouterInit() {
     
     var capHandler = captcha.Server(captcha.StdWidth, captcha.StdHeight)
     iris.Get("/captcha/*id", iris.ToHandlerFunc(capHandler))("captcha")
+    
+    iris.Get("/submit", func(c *iris.Context) {
+        if !isLoggedIn(c) {
+            c.EmitError(iris.StatusForbidden)
+        } else {
+            buttons := []Field {
+                {
+                    "submit",
+                    "submit",
+                    "Submit",
+                },
+                {
+                    "submit",
+                    "preview",
+                    "Preview",
+                },
+            }
+            fields := []Field {
+                {
+                    "text",
+                    "title",
+                    "Title",
+                },
+                {
+                    "text",
+                    "tags",
+                    "Tags (comma separated)",
+                },
+            }
+            c.Render("submit.html", struct {
+                Title string
+                Fields []Field
+                Buttons []Field
+            } {
+                "Submit an article",
+                fields,
+                buttons,
+            })
+        }
+    })("submit")
+    
+    iris.Post("/submit", func(c *iris.Context) {
+        action := c.FormValueString("action")
+        body := c.FormValueString("body")
+        // title := c.FormValueString("title")
+        // tags := c.FormValueString("tags")
+        if action == "preview" {
+            c.Render("preview.html", struct {
+                Title string
+                Text template.HTML
+            } {
+                "Preview",
+                template.HTML(getMarkdown(body)),
+            })
+        }
+    })
+}
+
+func isLoggedIn(c *iris.Context) bool {
+    return c.Session().Get("username") != ""
 }
 
 func getCreds(c *iris.Context) (bool, string, string) {
@@ -241,4 +326,12 @@ func renderSign(c *iris.Context, title, action string) {
         action,
         fields,
     })
+}
+
+func readMD(name string) string {
+    dat, err := ioutil.ReadFile("markdown/" + name)
+    if !pe(err) {
+        return ""
+    }
+    return string(dat)
 }

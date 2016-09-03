@@ -1,0 +1,21 @@
+<div class="container">
+    <div class="page-header">
+        <h1>{{ .Title }}</h1>
+    </div>
+    <form method="POST">
+        {{ range $field := .Fields }}
+        <div class="form-group">
+            <label class="sr-only" for="{{ $field.Name }}">{{ $field.Placeholder }}</label>
+            <input id="{{ $field.Name }}" type="{{ $field.Type }}" class="form-control bg-primary" placeholder="{{ $field.Placeholder }}" name="{{ $field.Name }}">
+        </div>
+        {{ end }}
+        <div class="form-group">
+            <textarea class="form-control" rows="20" name="body"></textarea>
+        </div>
+        <div class="form-group">
+            {{ range $btn := .Buttons }}
+            <button class="btn btn-default" name="action" type="{{ $btn.Type }}" value="{{ $btn.Name }}">{{ $btn.Placeholder }}</button>
+            {{ end }}
+        </div>
+    </form>
+</div>
