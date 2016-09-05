@@ -1,4 +1,4 @@
-package main
+package router
 
 import (
     "github.com/kataras/iris"
@@ -11,6 +11,8 @@ import (
     "github.com/russross/blackfriday"
     "html/template"
     "io/ioutil"
+    "niec/common"
+    "niec/db"
 )
 
 type ErrorContainer struct {
@@ -139,7 +141,7 @@ func RouterInit() {
     
     iris.Post("/sign/up", func(c *iris.Context) {
         if res, email, password := getCreds(c); res {
-            if CheckEmailExists(email) {
+            if db.CheckEmailExists(email) {
                 c.RedirectTo("email-already-exists")
             } else {
                 c.Session().Set("email", email)
@@ -157,9 +159,9 @@ func RouterInit() {
     
     iris.Post("/sign/in", func(c *iris.Context) {
         if res, email, password := getCreds(c); res {
-            if CheckEmailExists(email) {
-                if VerifyCreds(email, password) {
-                    c.Session().Set("username", GetUsername(email))
+            if db.CheckEmailExists(email) {
+                if db.VerifyCreds(email, password) {
+                    c.Session().Set("username", db.GetUsername(email))
                 } else {
                     c.RedirectTo("invalid-credentials")
                 }
@@ -211,14 +213,14 @@ func RouterInit() {
         
         if c.Session().GetString("password") != retype {
             c.RedirectTo("password-mismatch")
-        } else if CheckUsernameExists(username) {
+        } else if db.CheckUsernameExists(username) {
             c.RedirectTo("username-already-taken")
         } else if c.Session().GetString("email") == "" {
             c.EmitError(iris.StatusInternalServerError)
         } else if !captcha.VerifyString(c.Session().Get("capid").(string), cap) {
             c.RedirectTo("incorrect-captcha")
         } else {
-            if !InsertUser(
+            if !db.InsertUser(
                 c.Session().GetString("email"),
                 fmt.Sprintf("%x", md5.Sum([]byte(retype))),
                 username, 
@@ -335,3 +337,5 @@ func readMD(name string) string {
     }
     return string(dat)
 }
+
+var pe = common.Pe

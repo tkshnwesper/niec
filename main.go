@@ -2,6 +2,8 @@ package main
 
 import (
 	"github.com/kataras/iris"
+	"niec/db"
+	"niec/router"
 	// "github.com/kataras/iris/config"
 )
 
@@ -15,8 +17,8 @@ func main() {
 	// }
 	// conf := def.MergeSingle(man)
 	// iris.Servers.Add(conf)
-	RouterInit()
-	InitDB()
+	router.RouterInit()
+	db.InitDB()
 	iris.Listen(":8081")
 	// iris.Go()
 	
