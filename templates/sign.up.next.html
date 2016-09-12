@@ -15,16 +15,6 @@
                     <textarea class="form-control" rows="3" placeholder="Enter a short bio (Optional)" name="bio"></textarea>
                 </div>
                 <div class="form-group">
-                    <div class="center-block">
-                        <img src='/captcha/{{ .CapID }}.png' class="img-responsive">
-                    </div>
-                    <audio controls>
-                        <source src="/captcha/{{ .CapID }}.wav" type="audio/wav">
-                    </audio>
-                    <label class="sr-only" for="captcha">Captcha</label>
-                    <input id="captcha" type="text" class="form-control bg-primary" placeholder="Enter the captcha" name="captcha">
-                </div>
-                <div class="form-group">
                     <input type="submit" class="btn btn-default btn-block" value="Finish">
                 </div>
             </form>

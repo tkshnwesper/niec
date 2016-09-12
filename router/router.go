@@ -108,7 +108,7 @@ func InitErrorPages() {
     }
 }
 
-func RouterInit() {
+func Init() {
     iris.UseTemplate(HTML.New(HTML.Config {
         Layout: "layout0.html",
     }))
@@ -140,16 +140,20 @@ func RouterInit() {
     })("signup")
     
     iris.Post("/sign/up", func(c *iris.Context) {
-        if res, email, password := getCreds(c); res {
-            if db.CheckEmailExists(email) {
-                c.RedirectTo("email-already-exists")
+        if verifyCaptcha(c) {
+            if res, email, password := getCreds(c); res {
+                if db.CheckEmailExists(email) {
+                    c.RedirectTo("email-already-exists")
+                } else {
+                    c.Session().Set("email", email)
+                    c.Session().Set("password", password)
+                    c.RedirectTo("signup-next")
+                }
             } else {
-                c.Session().Set("email", email)
-                c.Session().Set("password", password)
-                c.RedirectTo("signup-next")
+                c.RedirectTo("blank-field")
             }
         } else {
-            c.RedirectTo("blank-field")
+            c.RedirectTo("incorrect-captcha")
         }
     })
     
@@ -158,24 +162,26 @@ func RouterInit() {
     })("signin")
     
     iris.Post("/sign/in", func(c *iris.Context) {
-        if res, email, password := getCreds(c); res {
-            if db.CheckEmailExists(email) {
-                if db.VerifyCreds(email, password) {
-                    c.Session().Set("username", db.GetUsername(email))
+        if verifyCaptcha(c) {
+            if res, email, password := getCreds(c); res {
+                if db.CheckEmailExists(email) {
+                    if db.VerifyCreds(email, password) {
+                        c.Session().Set("username", db.GetUsername(email))
+                    } else {
+                        c.RedirectTo("invalid-credentials")
+                    }
                 } else {
-                    c.RedirectTo("invalid-credentials")
+                    c.RedirectTo("user-does-not-exist")
                 }
             } else {
-                c.RedirectTo("user-does-not-exist")
+                c.RedirectTo("blank-field")
             }
         } else {
-            c.RedirectTo("blank-field")
+            c.RedirectTo("incorrect-captcha")
         }
     })
     
     iris.Get("/sign/up/next", func(c *iris.Context) {
-        capid := captcha.New()
-        c.Session().Set("capid", capid)
         fields := []Field {
             {
                 "text",
@@ -196,11 +202,9 @@ func RouterInit() {
         c.Render("sign.up.next.html", struct{
             Title string
             Fields []Field
-            CapID string
         }{
             "Niec :: SignUp - Next",
             fields,
-            capid,
         })
     })("signup-next")
     
@@ -209,7 +213,6 @@ func RouterInit() {
         username := html.EscapeString(c.FormValueString("username"))
         dp := html.EscapeString(c.FormValueString("dp"))
         retype := c.FormValueString("retype")
-        cap := c.FormValueString("captcha")
         
         if c.Session().GetString("password") != retype {
             c.RedirectTo("password-mismatch")
@@ -217,8 +220,6 @@ func RouterInit() {
             c.RedirectTo("username-already-taken")
         } else if c.Session().GetString("email") == "" {
             c.EmitError(iris.StatusInternalServerError)
-        } else if !captcha.VerifyString(c.Session().Get("capid").(string), cap) {
-            c.RedirectTo("incorrect-captcha")
         } else {
             if !db.InsertUser(
                 c.Session().GetString("email"),
@@ -297,7 +298,7 @@ func isLoggedIn(c *iris.Context) bool {
 }
 
 func getCreds(c *iris.Context) (bool, string, string) {
-    c.Session().Clear()
+    // c.Session().Clear()
     email := c.FormValueString("email")
     password := c.FormValueString("password")
     if email == "" || password == "" {
@@ -307,6 +308,8 @@ func getCreds(c *iris.Context) (bool, string, string) {
 }
 
 func renderSign(c *iris.Context, title, action string) {
+    capid := captcha.New()
+    c.Session().Set("capid", capid)
     fields := []Field {
         {
             "email",
@@ -323,10 +326,12 @@ func renderSign(c *iris.Context, title, action string) {
         Title string
         Action string
         Fields []Field
+        CapID string
     }{
         title,
         action,
         fields,
+        capid,
     })
 }
 
@@ -336,6 +341,11 @@ func readMD(name string) string {
         return ""
     }
     return string(dat)
+}
+
+func verifyCaptcha(c *iris.Context) bool {
+    cap := c.FormValueString("captcha")
+    return captcha.VerifyString(c.Session().Get("capid").(string), cap)
 }
 
 var pe = common.Pe

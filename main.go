@@ -17,8 +17,8 @@ func main() {
 	// }
 	// conf := def.MergeSingle(man)
 	// iris.Servers.Add(conf)
-	router.RouterInit()
-	db.InitDB()
+	router.Init()
+	db.Init()
 	iris.Listen(":8081")
 	// iris.Go()
 	
