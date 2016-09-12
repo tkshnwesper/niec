@@ -5,8 +5,6 @@ package common
 
 import (
     "log"
-    "fmt"
-    "time"
     "github.com/microcosm-cc/bluemonday"
     "github.com/russross/blackfriday"
     "io/ioutil"
@@ -19,20 +17,6 @@ func Pe(err error) bool {
         return false
     }
     return true
-}
-
-// GetDatetime returns a mysql compatible datetime in order to store it in db
-func GetDatetime() string {
-    t := time.Now()
-    return fmt.Sprintf(
-        "%d-%02d-%02d %02d:%02d:%02d",
-        t.Year(),
-        t.Month(),
-        t.Day(),
-        t.Hour(),
-        t.Minute(),
-        t.Second(),
-    )
 }
 
 // GetMarkdown returns the HTML translation of markdown code
