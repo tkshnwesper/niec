@@ -59,7 +59,7 @@ func InsertUser(
 ) bool {
     stmt, err := db.Prepare("insert into user(email, password, username, dp, bio, created_at) values(?, ?, ?, ?, ?, ?)")
     a := pe(err)
-    _, err1 := stmt.Exec(email, password, username, dp, bio, getDatetime)
+    _, err1 := stmt.Exec(email, password, username, dp, bio, getDatetime())
     b := pe(err1)
     return a && b
 }
