@@ -6,7 +6,7 @@ import (
     "niec/common"
 )
 
-func initSubmit() {
+func initSubmitPages() {
     iris.Get("/submit", func(c *iris.Context) {
         if !isLoggedIn(c) {
             c.EmitError(iris.StatusForbidden)

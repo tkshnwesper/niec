@@ -27,6 +27,8 @@ func Init() {
     
     initSignPages()
     
+    initSubmitPages()
+    
     iris.Get("/", func(c *iris.Context) {
         c.Render("index.html", struct{
             Title string
