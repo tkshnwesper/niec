@@ -3,6 +3,7 @@ package router
 import (
     "github.com/kataras/iris"
     "fmt"
+    "html/template"
 )
 
 // ErrorContainer is a struct which is responsible for holding information about errors
@@ -20,11 +21,11 @@ func buildErrorPage(c *iris.Context, err ErrorContainer) {
     c.Render("error.html", struct {
         Title string
         ErrorTitle string
-        ErrorMessage string
+        ErrorMessage template.HTML
     } {
         fmt.Sprintf("Error: %v", err.Title),
         err.Title,
-        err.Message,
+        template.HTML(err.Message),
     })
 }
 
