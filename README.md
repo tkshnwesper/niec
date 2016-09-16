@@ -54,4 +54,5 @@ cd $GOPATH/src/niec/static
   1. `jquery`
   2. `bootstrap`
   3. Also `highlight.js`, but you can skip that for now.
+
 * We are done! `cd` to the project root directory and do `go clean; go install; niec` to start the server.
