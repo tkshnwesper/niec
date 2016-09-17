@@ -52,4 +52,8 @@ func Init() {
     
 }
 
+func isLoggedIn(c *iris.Context) bool {
+    return c.Session().GetString(common.UserIdentificationAttribute) != ""
+}
+
 var pe = common.Pe

@@ -66,11 +66,20 @@ func InsertUser(
 }
 
 // InsertArticle inserts an article into the database
-func InsertArticle(title, _, body string) bool {
+func InsertArticle(username, title, _, body string) bool {
     stmt, err := db.Prepare("insert into article(created_at, title, text) values(?, ?, ?)")
     a := pe(err)
-    _, err1 := stmt.Exec(getDatetime(), title, body)
+    res, err1 := stmt.Exec(getDatetime(), title, body)
     b := pe(err1)
+    if !(a && b) {
+        return false
+    }
+    lid, _ := res.LastInsertId()
+    uid := GetUserID(username)
+    stmt, err = db.Prepare("insert into map_user_article(user_id, article_id) values(?, ?)")
+    a = pe(err)
+    res, err1 = stmt.Exec(uid, lid)
+    b = pe(err1)
     return a && b
 }
 
@@ -91,6 +100,14 @@ func GetUsername(email string) string {
     err := db.QueryRow("select username from user where email = ?", email).Scan(&un)
     pe(err)
     return un
+}
+
+// GetUserID returns the userID of the user whose username is passed to it
+func GetUserID(username string) int64 {
+    var id int64
+    err := db.QueryRow("select id from user where username = ?", username).Scan(&id)
+    pe(err)
+    return id
 }
 
 // GetDatetime returns a mysql compatible datetime in order to store it in db

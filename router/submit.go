@@ -4,6 +4,7 @@ import (
     "github.com/kataras/iris"
     "html/template"
     "niec/common"
+    "niec/db"
 )
 
 func initSubmitPages() {
@@ -48,17 +49,21 @@ func initSubmitPages() {
     })("submit")
     
     iris.Post("/submit", func(c *iris.Context) {
-        body := c.FormValueString("body")
-        title := c.FormValueString("title")
-        tags := c.FormValueString("tags")
-        action := c.FormValueString("action")
-        if action == "preview" {
-            c.SetFlash("body", body)
-            c.RedirectTo("preview")
-        } else if action == "submit" {
-            
+        if !isLoggedIn(c) {
+            c.EmitError(iris.StatusForbidden)
         } else {
-            c.EmitError(iris.StatusNotFound)
+            body := c.FormValueString("body")
+            title := c.FormValueString("title")
+            tags := c.FormValueString("tags")
+            action := c.FormValueString("action")
+            if action == "preview" {
+                c.SetFlash("body", body)
+                c.RedirectTo("preview")
+            } else if action == "submit" {
+                db.InsertArticle(c.Session().GetString(common.UserIdentificationAttribute), title, tags, body)
+            } else {
+                c.EmitError(iris.StatusNotFound)
+            }
         }
     })
     

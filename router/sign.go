@@ -113,10 +113,6 @@ func initSignPages() {
     })
 }
 
-func isLoggedIn(c *iris.Context) bool {
-    return c.Session().Get(common.UserIdentificationAttribute) != ""
-}
-
 func getCreds(c *iris.Context) (bool, string, string) {
     email := c.FormValueString("email")
     password := c.FormValueString("password")
