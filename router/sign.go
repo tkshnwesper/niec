@@ -74,6 +74,11 @@ func initSignPages() {
                 "dp",
                 "Display picture URL (Optional)",
             },
+            {
+                "url",
+                "website",
+                "Website (Optional)",
+            },
         }
         c.Render("sign.up.next.html", struct{
             Title string
@@ -89,6 +94,7 @@ func initSignPages() {
         username := html.EscapeString(c.FormValueString("username"))
         dp := html.EscapeString(c.FormValueString("dp"))
         retype := c.FormValueString("retype")
+        website := c.FormValueString("website")
         
         if c.Session().GetString("password") != retype {
             c.RedirectTo("password-mismatch")
@@ -100,9 +106,10 @@ func initSignPages() {
             if !db.InsertUser(
                 c.Session().GetString("email"),
                 retype,
-                username, 
-                dp, 
+                username,
+                dp,
                 bio,
+                website,
             ) {
                 c.EmitError(iris.StatusInternalServerError)
             } else {

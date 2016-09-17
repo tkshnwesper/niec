@@ -56,11 +56,12 @@ func InsertUser(
     username string,
     dp string,
     bio string,
+    website string,
 ) bool {
     hashedPassword := fmt.Sprintf("%x", md5.Sum([]byte(password)))
-    stmt, err := db.Prepare("insert into user(email, password, username, dp, bio, created_at) values(?, ?, ?, ?, ?, ?)")
+    stmt, err := db.Prepare("insert into user(email, password, username, dp, bio, created_at, website) values(?, ?, ?, ?, ?, ?, ?)")
     a := pe(err)
-    _, err1 := stmt.Exec(email, hashedPassword, username, dp, bio, getDatetime())
+    _, err1 := stmt.Exec(email, hashedPassword, username, dp, bio, getDatetime(), website)
     b := pe(err1)
     return a && b
 }
