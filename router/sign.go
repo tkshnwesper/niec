@@ -41,6 +41,8 @@ func initSignPages() {
             if res, email, password := getCreds(c); res {
                 if db.CheckEmailExists(email) {
                     if db.VerifyCreds(email, password) {
+                        // Session cleared after successful signin
+                        c.Session().Clear()
                         c.Session().Set("username", db.GetUsername(email))
                     } else {
                         c.RedirectTo("invalid-credentials")
@@ -104,6 +106,9 @@ func initSignPages() {
                 bio,
             ) {
                 c.EmitError(iris.StatusInternalServerError)
+            } else {
+                // Session cleared after successful signup
+                c.Session().Clear()
             }
         }
     })
