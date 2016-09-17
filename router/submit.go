@@ -60,7 +60,14 @@ func initSubmitPages() {
                 c.SetFlash("body", body)
                 c.RedirectTo("preview")
             } else if action == "submit" {
-                db.InsertArticle(c.Session().GetString(common.UserIdentificationAttribute), title, tags, body)
+                if !db.InsertArticle(
+                    c.Session().GetString(common.UserIdentificationAttribute), 
+                    title, 
+                    tags, 
+                    body,
+                ) {
+                    c.EmitError(iris.StatusInternalServerError)
+                }
             } else {
                 c.EmitError(iris.StatusNotFound)
             }
