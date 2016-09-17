@@ -120,7 +120,6 @@ func isLoggedIn(c *iris.Context) bool {
 }
 
 func getCreds(c *iris.Context) (bool, string, string) {
-    // c.Session().Clear()
     email := c.FormValueString("email")
     password := c.FormValueString("password")
     if email == "" || password == "" {
