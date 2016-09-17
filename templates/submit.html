@@ -2,7 +2,7 @@
     <div class="page-header">
         <h1>{{ .Title }}</h1>
     </div>
-    <form method="POST" action='{{ urlpath "preview" }}'>
+    <form method="POST" action='{{ urlpath "submit" }}'>
         {{ range $field := .Fields }}
         <div class="form-group">
             <label class="sr-only" for="{{ $field.Name }}">{{ $field.Placeholder }}</label>

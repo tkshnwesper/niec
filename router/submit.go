@@ -47,19 +47,29 @@ func initSubmitPages() {
         }
     })("submit")
     
-    iris.Post("/preview", func(c *iris.Context) {
-        action := c.FormValueString("action")
+    iris.Post("/submit", func(c *iris.Context) {
         body := c.FormValueString("body")
-        // title := c.FormValueString("title")
-        // tags := c.FormValueString("tags")
+        title := c.FormValueString("title")
+        tags := c.FormValueString("tags")
+        action := c.FormValueString("action")
         if action == "preview" {
-            c.Render("preview.html", struct {
-                Title string
-                Text template.HTML
-            } {
-                "Preview",
-                template.HTML(common.GetMarkdown(body)),
-            })
+            c.SetFlash("body", body)
+            c.RedirectTo("preview")
+        } else if action == "submit" {
+            
+        } else {
+            c.EmitError(iris.StatusNotFound)
         }
+    })
+    
+    iris.Get("/preview", func(c *iris.Context) {
+        body, _ := c.GetFlash("body")
+        c.Render("preview.html", struct {
+            Title string
+            Text template.HTML
+        } {
+            "Preview",
+            template.HTML(common.GetMarkdown(body)),
+        })
     })("preview")
 }
