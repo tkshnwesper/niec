@@ -65,7 +65,14 @@ func InsertUser(
     return a && b
 }
 
-// func InsertArticle
+// InsertArticle inserts an article into the database
+func InsertArticle(title, _, body string) bool {
+    stmt, err := db.Prepare("insert into article(created_at, title, text) values(?, ?, ?)")
+    a := pe(err)
+    _, err1 := stmt.Exec(getDatetime(), title, body)
+    b := pe(err1)
+    return a && b
+}
 
 // VerifyCreds verifies whether the email and password match
 func VerifyCreds(email string, password string) bool {
