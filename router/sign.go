@@ -101,7 +101,7 @@ func initSignPages() {
         } else {
             if !db.InsertUser(
                 c.Session().GetString("email"),
-                fmt.Sprintf("%x", md5.Sum([]byte(retype))),
+                retype,
                 username, 
                 dp, 
                 bio,

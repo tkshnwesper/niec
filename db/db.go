@@ -57,12 +57,15 @@ func InsertUser(
     dp string,
     bio string,
 ) bool {
+    hashedPassword := fmt.Sprintf("%x", md5.Sum([]byte(password)))
     stmt, err := db.Prepare("insert into user(email, password, username, dp, bio, created_at) values(?, ?, ?, ?, ?, ?)")
     a := pe(err)
-    _, err1 := stmt.Exec(email, password, username, dp, bio, getDatetime())
+    _, err1 := stmt.Exec(email, hashedPassword, username, dp, bio, getDatetime())
     b := pe(err1)
     return a && b
 }
+
+// func InsertArticle
 
 // VerifyCreds verifies whether the email and password match
 func VerifyCreds(email string, password string) bool {
