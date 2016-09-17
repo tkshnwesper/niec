@@ -8,11 +8,19 @@ import (
     "niec/common"
 )
 
+// Button holds information about the buttons to be displayed in the view
+type Button struct {
+    Type string
+    Name string
+    Placeholder string
+}
+
 // Field holds information about the input fields to be displayed in the view
 type Field struct {
     Type string
     Name string
     Placeholder string
+    MaxSize int
 }
 
 // Init helps to initialize all the pages required in the site

@@ -8,11 +8,11 @@
                 {{ range $field := .Fields }}
                 <div class="form-group">
                     <label class="sr-only" for="{{ $field.Name }}">{{ $field.Placeholder }}</label>
-                    <input id="{{ $field.Name }}" type="{{ $field.Type }}" class="form-control bg-primary" placeholder="{{ $field.Placeholder }}" name="{{ $field.Name }}">
+                    <input id="{{ $field.Name }}" type="{{ $field.Type }}" class="form-control bg-primary" placeholder="{{ $field.Placeholder }}" name="{{ $field.Name }}" maxlength="{{ $field.MaxSize }}">
                 </div>
                 {{ end }}
                 <div class="form-group">
-                    <textarea class="form-control" rows="3" placeholder="Enter a short bio (Optional)" name="bio"></textarea>
+                    <textarea class="form-control" rows="3" placeholder="Enter a bio (Optional)" name="bio" maxlength="65533"></textarea>
                 </div>
                 <div class="form-group">
                     <input type="submit" class="btn btn-default btn-block" value="Finish">

@@ -12,7 +12,7 @@ func initSubmitPages() {
         if !isLoggedIn(c) {
             c.EmitError(iris.StatusForbidden)
         } else {
-            buttons := []Field {
+            buttons := []Button {
                 {
                     "submit",
                     "submit",
@@ -29,17 +29,19 @@ func initSubmitPages() {
                     "text",
                     "title",
                     "Title",
+                    255,
                 },
                 {
                     "text",
                     "tags",
                     "Tags (comma separated)",
+                    -1,
                 },
             }
             c.Render("submit.html", struct {
                 Title string
                 Fields []Field
-                Buttons []Field
+                Buttons []Button
             } {
                 "Submit an article",
                 Fields,

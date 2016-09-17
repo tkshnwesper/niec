@@ -6,11 +6,11 @@
         {{ range $field := .Fields }}
         <div class="form-group">
             <label class="sr-only" for="{{ $field.Name }}">{{ $field.Placeholder }}</label>
-            <input id="{{ $field.Name }}" type="{{ $field.Type }}" class="form-control bg-primary" placeholder="{{ $field.Placeholder }}" name="{{ $field.Name }}">
+            <input id="{{ $field.Name }}" type="{{ $field.Type }}" class="form-control bg-primary" placeholder="{{ $field.Placeholder }}" name="{{ $field.Name }}" maxlength="{{ $field.MaxSize }}">
         </div>
         {{ end }}
         <div class="form-group">
-            <textarea class="form-control" rows="15" name="body"></textarea>
+            <textarea class="form-control" rows="15" name="body" maxlength="4294967291"></textarea>
         </div>
         <div class="form-group">
             {{ range $btn := .Buttons }}
