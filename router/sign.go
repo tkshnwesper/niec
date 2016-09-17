@@ -7,6 +7,7 @@ import (
     "niec/db"
     "github.com/kataras/iris"
     "github.com/dchest/captcha"
+    "niec/common"
 )
 
 func initSignPages() {
@@ -43,7 +44,7 @@ func initSignPages() {
                     if db.VerifyCreds(email, password) {
                         // Session cleared after successful signin
                         c.Session().Clear()
-                        c.Session().Set("username", db.GetUsername(email))
+                        c.Session().Set(common.UserIdentificationAttribute, db.GetUsername(email))
                     } else {
                         c.RedirectTo("invalid-credentials")
                     }
@@ -115,7 +116,7 @@ func initSignPages() {
 }
 
 func isLoggedIn(c *iris.Context) bool {
-    return c.Session().Get("username") != ""
+    return c.Session().Get(common.UserIdentificationAttribute) != ""
 }
 
 func getCreds(c *iris.Context) (bool, string, string) {

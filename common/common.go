@@ -10,6 +10,10 @@ import (
     "io/ioutil"
 )
 
+/* UserIdentificationAttribute will be stored in the server session in order to identify the user
+It should be something that uniquely identifies the user, for example: user_id, username or email */
+const UserIdentificationAttribute = "username"
+
 // Pe returns whether an error is real or not and prints fatal output if it is
 func Pe(err error) bool {
     if err != nil {
