@@ -1,9 +1,7 @@
 package router
 
 import (
-    "fmt"
     "html"
-    "crypto/md5"
     "niec/db"
     "github.com/kataras/iris"
     "github.com/dchest/captcha"
