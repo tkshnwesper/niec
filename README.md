@@ -23,7 +23,7 @@ git clone https://github.com/tkshnwesper/niec.git
 
 ```
 cd $GOPATH/src/niec
-go get
+go get -u
 ```
 
 * Set up a MariaDB/MySql database (I'm assuming you have one of those installed already)
