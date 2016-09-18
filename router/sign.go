@@ -10,7 +10,7 @@ import (
 
 func initSignPages() {
     iris.Get("/sign/up", func(c *iris.Context) {
-        renderSign(c, "Niec :: SignUp", "SignUp")
+        renderSign(c, "Niec :: Sign Up", "Sign Up")
     })("signup")
     
     iris.Post("/sign/up", func(c *iris.Context) {
@@ -32,7 +32,7 @@ func initSignPages() {
     })
     
     iris.Get("/sign/in", func(c *iris.Context) {
-        renderSign(c, "Niec :: SignIn", "SignIn")
+        renderSign(c, "Niec :: Sign In", "Sign In")
     })("signin")
     
     iris.Post("/sign/in", func(c *iris.Context) {
