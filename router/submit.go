@@ -35,7 +35,7 @@ func initSubmitPages() {
                 //     "text",
                 //     "tags",
                 //     "Tags (comma separated)",
-                //     -1,
+                //     255,
                 // },
             }
             c.Render("submit.html", struct {
