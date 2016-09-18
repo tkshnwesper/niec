@@ -1,11 +1,11 @@
 <div class="container">
     {{ range $article := .Articles }}
-    <div class="article">
+    <article>
         <h1>{{ $article.Title }}</h1>
         <h4>#{{ $article.ID }} {{ $article.CreatedAt }}</h4>
         <div class="text">
             {{ $article.Text }}
         </div>
-    </div>
+    </article>
     {{ end }}
 </div>
