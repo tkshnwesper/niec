@@ -38,11 +38,15 @@ func Init() {
     initSubmitPages()
     
     iris.Get("/", func(c *iris.Context) {
-        c.Render("index.html", struct{
-            Title string
-        }{
-            "Welcome to Niec!",
-        })
+        if isLoggedIn(c) {
+            
+        } else {
+            c.Render("index.html", struct{
+                Title string
+            }{
+                "Welcome to Niec!",
+            })
+        }
     })("landing")
     
     iris.Get("/learn-more", func(c *iris.Context) {
