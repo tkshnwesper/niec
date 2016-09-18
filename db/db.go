@@ -113,7 +113,12 @@ func GetUserID(username string) int64 {
 
 // GetDatetime returns a mysql compatible datetime in order to store it in db
 func getDatetime() string {
-    t := time.Now()
+    loc, _ := time.LoadLocation("Asia/Calcutta")
+    t, _ := time.ParseInLocation(
+        "2006 Jan 02 15:04:05",
+        time.Now().Format("2006 Jan 02 15:04:05"),
+        loc,
+    )
     return fmt.Sprintf(
         "%d-%02d-%02d %02d:%02d:%02d",
         t.Year(),
