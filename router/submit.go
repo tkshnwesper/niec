@@ -31,12 +31,12 @@ func initSubmitPages() {
                     "Title",
                     255,
                 },
-                {
-                    "text",
-                    "tags",
-                    "Tags (comma separated)",
-                    -1,
-                },
+                // {
+                //     "text",
+                //     "tags",
+                //     "Tags (comma separated)",
+                //     -1,
+                // },
             }
             c.Render("submit.html", struct {
                 Title string
