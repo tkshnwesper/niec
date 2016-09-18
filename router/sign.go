@@ -43,6 +43,7 @@ func initSignPages() {
                         // Session cleared after successful signin
                         c.Session().Clear()
                         c.Session().Set(common.UserIdentificationAttribute, db.GetUsername(email))
+                        c.RedirectTo("landing")
                     } else {
                         c.RedirectTo("invalid-credentials")
                     }
@@ -119,6 +120,7 @@ func initSignPages() {
             } else {
                 // Session cleared after successful signup
                 c.Session().Clear()
+                c.RedirectTo("landing")
             }
         }
     })
