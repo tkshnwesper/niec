@@ -10,7 +10,16 @@ import (
     "crypto/md5"
     "niec/common"
     "time"
+    "html/template"
 )
+
+// Article structure is used for storing data of an article
+type Article struct {
+    ID int64
+    Title string
+    Text template.HTML
+    CreatedAt string
+}
 
 var db *sql.DB
 
@@ -128,6 +137,31 @@ func getDatetime() string {
         t.Minute(),
         t.Second(),
     )
+}
+
+// GetLatestArticles returns a number of recent articles
+func GetLatestArticles() []Article {
+    var articles []Article
+    var check = true
+    stmt, err := db.Prepare("select id, title, text, created_at from article order by created_at desc")
+    check = pe(err)
+    defer stmt.Close()
+    rows, err2 := stmt.Query()
+    check = check && pe(err2)
+    defer rows.Close()
+    for rows.Next() {
+        var art Article
+        var text string
+        rows.Scan(
+            &art.ID,
+            &art.Title,
+            &text,
+            &art.CreatedAt,
+        )
+        art.Text = template.HTML(common.GetMarkdown(text))
+        articles = append(articles, art)
+    }
+    return articles
 }
 
 var pe = common.Pe

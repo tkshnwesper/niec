@@ -6,6 +6,7 @@ import (
     "github.com/dchest/captcha"
     "html/template"
     "niec/common"
+    "niec/db"
 )
 
 // Button holds information about the buttons to be displayed in the view
@@ -39,7 +40,13 @@ func Init() {
     
     iris.Get("/", func(c *iris.Context) {
         if isLoggedIn(c) {
-            
+            c.Render("home.html", struct {
+                Title string
+                Articles []db.Article
+            }{
+                "Niec :: Home",
+                db.GetLatestArticles(),
+            })
         } else {
             c.Render("index.html", struct{
                 Title string
