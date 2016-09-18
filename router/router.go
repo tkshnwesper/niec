@@ -27,7 +27,7 @@ type Field struct {
 // Init helps to initialize all the pages required in the site
 func Init() {
     iris.UseTemplate(HTML.New(HTML.Config {
-        Layout: "layout0.html",
+        Layout: "layout.html",
     }))
     
     iris.StaticServe("./static/", "static")
