@@ -66,6 +66,11 @@ func Init() {
         })
     })("learn-more")
     
+    iris.Get("/logout", func(c *iris.Context) {
+        c.Session().Clear()
+        c.RedirectTo("landing")
+    })
+    
     var capHandler = captcha.Server(captcha.StdWidth, captcha.StdHeight)
     iris.Get("/captcha/*id", iris.ToHandlerFunc(capHandler))("captcha")
     
