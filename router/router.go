@@ -71,7 +71,7 @@ func Init() {
         if err != nil {
             c.EmitError(iris.StatusNotFound)
         } else {
-            art = db.GetArticle(id)
+            art := db.GetArticle(id)
             c.Render("article.html", struct {
                 Title string
                 Article db.Article
