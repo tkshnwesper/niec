@@ -90,7 +90,7 @@ func Init() {
             user := db.GetUser(id)
             c.Render("user.html", struct {
                 Title string
-                Article db.User
+                User db.User
             }{
                 user.Username,
                 user,
