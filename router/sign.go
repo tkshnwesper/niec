@@ -96,8 +96,8 @@ func initSignPages() {
     
     iris.Post("/sign/up/next", func(c *iris.Context) {
         bio := c.FormValueString("bio")
-        username := html.EscapeString(c.FormValueString("username"))
-        dp := html.EscapeString(c.FormValueString("dp"))
+        username := c.FormValueString("username")
+        dp := c.FormValueString("dp")
         retype := c.FormValueString("retype")
         website := c.FormValueString("website")
         
