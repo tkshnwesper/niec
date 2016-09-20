@@ -88,7 +88,7 @@ func initSignPages() {
             Title string
             Fields []Field
         }{
-            "Niec :: SignUp - Next",
+            "Niec :: Sign Up - Next",
             Fields,
         })
     })("signup-next")
