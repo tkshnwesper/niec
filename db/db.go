@@ -152,8 +152,9 @@ func GetLatestArticles() []Article {
             &art.UserID,
         )
         art.Text = template.HTML(common.GetMarkdown(text))
-        err3 := db.QueryRow("select username from user where id = ?").Scan(&art.Username)
+        stmt2, err3 := db.Prepare("select username from user where id = ?")
         pe(err3)
+        stmt2.QueryRow(art.UserID).Scan(&art.Username)
         articles = append(articles, art)
     }
     return articles
