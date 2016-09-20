@@ -81,7 +81,7 @@ func InsertUser(
 func InsertArticle(username, title, _, body string) bool {
     stmt, err := db.Prepare("insert into article(created_at, title, text, user_id) values(?, ?, ?, ?)")
     a := pe(err)
-    res, err1 := stmt.Exec(getDatetime(), title, body, GetUserID(username))
+    _, err1 := stmt.Exec(getDatetime(), title, body, GetUserID(username))
     b := pe(err1)
     return a && b
 }
