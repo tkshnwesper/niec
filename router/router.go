@@ -67,7 +67,19 @@ func Init() {
     })("learn-more")
     
     iris.Get("/article/:id", func(c *iris.Context) {
-        
+        id, err := c.ParamInt64("id")
+        if err != nil {
+            c.EmitError(iris.StatusNotFound)
+        } else {
+            art = db.GetArticle(id)
+            c.Render("article.html", struct {
+                Title string
+                Article db.Article
+            }{
+                art.Title,
+                art,
+            })
+        }
     })
     
     iris.Get("/logout", func(c *iris.Context) {

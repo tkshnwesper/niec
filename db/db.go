@@ -163,13 +163,15 @@ func GetLatestArticles() []Article {
 // GetArticle returns the article with the specified id
 func GetArticle(id int64) Article {
     var art Article
+    var text string
     err := db.QueryRow("select id, title, text, created_at, user_id from article where id = ?", id).Scan(
         &art.ID,
         &art.Title,
-        &art.Text,
+        &text,
         &art.CreatedAt,
         &art.UserID,
     )
+    art.Text = template.HTML(common.GetMarkdown(text))
     pe(err)
     err2 := db.QueryRow("select username from user where id = ?", art.UserID).Scan(&art.Username)
     pe(err2)
