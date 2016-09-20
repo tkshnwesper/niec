@@ -1,0 +1,10 @@
+<div class="container">
+    {{ $article := .Article }}
+    <article>
+        <h1><small>#{{ $article.ID }}</small> {{ $article.Title }}</h1>
+        <h4>by {{ $article.Username }} <small>on {{ $article.CreatedAt }}</small></h4>
+        <div class="text">
+            {{ $article.Text }}
+        </div>
+    </article>
+</div>
