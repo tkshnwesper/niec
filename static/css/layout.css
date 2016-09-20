@@ -1,0 +1,23 @@
+html {
+    height: 100%;
+}
+
+#flex-container {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    height: auto;
+}
+
+#app {
+    flex-grow: 0;
+}
+
+footer {
+    margin-top: 20px;
+    flex-grow: 1;
+}
