@@ -1,7 +1,6 @@
 package router
 
 import (
-    "html"
     "niec/db"
     "github.com/kataras/iris"
     "github.com/dchest/captcha"
