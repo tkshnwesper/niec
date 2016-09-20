@@ -79,19 +79,10 @@ func InsertUser(
 
 // InsertArticle inserts an article into the database
 func InsertArticle(username, title, _, body string) bool {
-    stmt, err := db.Prepare("insert into article(created_at, title, text) values(?, ?, ?)")
+    stmt, err := db.Prepare("insert into article(created_at, title, text, user_id) values(?, ?, ?, ?)")
     a := pe(err)
-    res, err1 := stmt.Exec(getDatetime(), title, body)
+    res, err1 := stmt.Exec(getDatetime(), title, body, GetUserID(username))
     b := pe(err1)
-    if !(a && b) {
-        return false
-    }
-    lid, _ := res.LastInsertId()
-    uid := GetUserID(username)
-    stmt, err = db.Prepare("insert into map_user_article(user_id, article_id) values(?, ?)")
-    a = pe(err)
-    res, err1 = stmt.Exec(uid, lid)
-    b = pe(err1)
     return a && b
 }
 
