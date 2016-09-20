@@ -1,2 +1,14 @@
 <div class="container">
-    {{ $user := .User
+    {{ $user := .User }}
+    <div class="col-lg-4">
+        <img src="{{ $user.DP }}" class="img-responsive center-block">
+        <h4>{{ $user.Username }}</h4>
+        <h3><a href="{{ $user.Website }}">{{ $user.Website }}</a></h3>
+        <p>
+            <strong>Join date: </strong>{{ $user.CreatedAt }}
+        </p>
+    </div>
+    <div class="col-lg-8">
+        {{ $user.Bio }}
+    </div>
+</div>
