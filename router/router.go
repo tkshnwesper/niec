@@ -80,7 +80,7 @@ func Init() {
                 art,
             })
         }
-    })
+    })("article")
     
     iris.Get("/logout", func(c *iris.Context) {
         c.Session().Clear()
