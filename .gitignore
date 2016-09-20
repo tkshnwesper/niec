@@ -1,2 +1,3 @@
-static
+static/bower_components
+static/highlight.js
 config.json
