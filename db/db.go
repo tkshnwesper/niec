@@ -23,6 +23,17 @@ type Article struct {
     Username string
 }
 
+// User structure holds non-sensitive information about an user. Sensitive information to be
+// extracted manually using specific functions.
+type User struct {
+    ID int64
+    Username string
+    Bio template.HTML
+    DP string
+    CreatedAt string
+    Website string
+}
+
 var db *sql.DB
 
 // Init Initializes the database
@@ -176,6 +187,23 @@ func GetArticle(id int64) Article {
     err2 := db.QueryRow("select username from user where id = ?", art.UserID).Scan(&art.Username)
     pe(err2)
     return art
+}
+
+// GetUser returns a user object of the specified username
+func GetUser(username string) User {
+    var text string
+    var user User
+    user.Username = username
+    err := db.QueryRow("select id, bio, dp, created_at, website from user where username = ?", username).Scan(
+        &user.ID,
+        &text,
+        &user.DP,
+        &user.CreatedAt,
+        &user.Website,
+    )
+    pe(err)
+    user.Bio = template.HTML(common.GetMarkdown(text))
+    return user
 }
 
 var pe = common.Pe
