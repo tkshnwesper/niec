@@ -66,6 +66,10 @@ func Init() {
         })
     })("learn-more")
     
+    iris.Get("/article/:id", func(c *iris.Context) {
+        
+    })
+    
     iris.Get("/logout", func(c *iris.Context) {
         c.Session().Clear()
         c.RedirectTo("landing")

@@ -160,4 +160,20 @@ func GetLatestArticles() []Article {
     return articles
 }
 
+// GetArticle returns the article with the specified id
+func GetArticle(id int64) Article {
+    var art Article
+    err := db.QueryRow("select id, title, text, created_at, user_id from article where id = ?", id).Scan(
+        &art.ID,
+        &art.Title,
+        &art.Text,
+        &art.CreatedAt,
+        &art.UserID,
+    )
+    pe(err)
+    err2 := db.QueryRow("select username from user where id = ?", art.UserID).Scan(&art.Username)
+    pe(err2)
+    return art
+}
+
 var pe = common.Pe
