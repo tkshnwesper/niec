@@ -190,12 +190,12 @@ func GetArticle(id int64) Article {
 }
 
 // GetUser returns a user object of the specified username
-func GetUser(username string) User {
+func GetUser(id int64) User {
     var text string
     var user User
-    user.Username = username
-    err := db.QueryRow("select id, bio, dp, created_at, website from user where username = ?", username).Scan(
-        &user.ID,
+    user.ID = id
+    err := db.QueryRow("select username, bio, dp, created_at, website from user where id = ?", id).Scan(
+        &user.Username,
         &text,
         &user.DP,
         &user.CreatedAt,

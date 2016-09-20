@@ -82,6 +82,22 @@ func Init() {
         }
     })("article")
     
+    iris.Get("/user/:id", func(c *iris.Context) {
+       id, err := c.ParamInt64("id")
+        if err != nil {
+            c.EmitError(iris.StatusNotFound)
+        } else {
+            user := db.GetUser(id)
+            c.Render("user.html", struct {
+                Title string
+                Article db.User
+            }{
+                user.Username,
+                user,
+            })
+        }
+    })("user")
+    
     iris.Get("/logout", func(c *iris.Context) {
         c.Session().Clear()
         c.RedirectTo("landing")
