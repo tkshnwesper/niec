@@ -57,7 +57,7 @@ func Init() {
     })("landing")
     
     iris.Get("/learn-more", func(c *iris.Context) {
-        c.Render("learn.more.html", struct {
+        c.Render("markdown.html", struct {
             Title string
             Text template.HTML
         } {
