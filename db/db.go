@@ -19,6 +19,8 @@ type Article struct {
     Title string
     Text template.HTML
     CreatedAt string
+    UserID int64
+    Username string
 }
 
 var db *sql.DB
@@ -142,12 +144,11 @@ func getDatetime() string {
 // GetLatestArticles returns a number of recent articles
 func GetLatestArticles() []Article {
     var articles []Article
-    var check = true
-    stmt, err := db.Prepare("select id, title, text, created_at from article order by created_at desc")
-    check = pe(err)
+    stmt, err := db.Prepare("select id, title, text, created_at, user_id from article order by created_at desc")
+    pe(err)
     defer stmt.Close()
     rows, err2 := stmt.Query()
-    check = check && pe(err2)
+    pe(err2)
     defer rows.Close()
     for rows.Next() {
         var art Article
@@ -157,8 +158,11 @@ func GetLatestArticles() []Article {
             &art.Title,
             &text,
             &art.CreatedAt,
+            &art.UserID,
         )
         art.Text = template.HTML(common.GetMarkdown(text))
+        err3 := db.QueryRow("select username from user where id = ?").Scan(&art.Username)
+        pe(err3)
         articles = append(articles, art)
     }
     return articles

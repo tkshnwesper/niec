@@ -17,7 +17,7 @@ const UserIdentificationAttribute = "username"
 // Pe returns whether an error is real or not and prints fatal output if it is
 func Pe(err error) bool {
     if err != nil {
-        log.Fatal(err)
+        log.Print(err)
         return false
     }
     return true

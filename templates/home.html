@@ -1,7 +1,7 @@
 <div class="container">
     {{ range $article := .Articles }}
     <article>
-        <h1>{{ $article.Title }}</h1>
+        <h1>{{ $article.Title }} <small>{{ $article.Username }}</small></h1>
         <h4>#{{ $article.ID }} {{ $article.CreatedAt }}</h4>
         <div class="text">
             {{ $article.Text }}
