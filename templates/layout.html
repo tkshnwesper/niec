@@ -10,11 +10,11 @@
         <script type="text/javascript" src="/static/bower_components/jquery/dist/jquery.min.js"></script>
         <script type="text/javascript" src="/static/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
         <script type="text/javascript" src="/static//highlight.js//highlight.pack.js"></script>
-        <script type="text/javascript">hljs.initHighlightingOnLoad();</script>
         <link rel="stylesheet" href="/static/css/layout.css">
+        <script type="text/javascript" src="/static/js/layout.js"></script>
     </head>
     <body>
-        <div id="flex-container">
+        <div id="top-container">
             <nav class="navbar navbar-default navbar-static-top">
                 <div class="container-fluid">
                     <div class="navbar-header">
@@ -27,6 +27,12 @@
                         <a class="navbar-brand" href='{{ urlpath "landing" }}'>Niec</a>
                     </div>
                     
+                    <form class="navbar-form navbar-left" role="search">
+                        <div class="form-group">
+                            <input type="text" class="form-control" placeholder="Search">
+                        </div>
+                    </form>
+                    
                     <div class="navbar-collapse collapse" id="navbar-collapse-id">
                         <ul class="nav navbar-nav">
                             <li><a href="#">Link</a></li>
@@ -35,18 +41,25 @@
                             <li><a href='{{ urlpath "logout" }}'>Logout</a></li>
                         </ul>
                     </div>
-                </div>
+
+                </div> <!-- /.container-fluid -->
             </nav>
-        
-            <div id="app">
-{{ yield }}
-            </div>
             
-            <footer>
-                <div class="container">
-                    Sticky footer content
+            <div id="relative-container">
+                
+                <div id="flex-container">
+            
+                    <div id="app">
+    {{ yield }}
+                    </div>
+                    
+                    <footer>
+                        <div class="container">
+                            Sticky footer content
+                        </div>
+                    </footer>
                 </div>
-            </footer>
+            </div>
         </div>
     </body>
 </html>

@@ -1,4 +1,15 @@
-html {
+#relative-container {
+    position: relative;
+    flex-grow: 1;
+}
+
+#top-container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+html, body {
     height: 100%;
 }
 
@@ -18,6 +29,8 @@ html {
 }
 
 footer {
-    margin-top: 20px;
+    margin-top: 40px;
     flex-grow: 1;
+    background-color: lightblue;
+    padding: 20px 0;
 }
