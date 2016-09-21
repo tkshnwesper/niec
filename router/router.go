@@ -98,6 +98,16 @@ func Init() {
         }
     })("user")
     
+    iris.Get("/search", func(c *iris.Context) {
+        c.Render("search.html", struct {
+            Title string
+            Articles []db.Article
+        }{
+            "Niec :: Search",
+            db.SearchArticles(c.FormValueString("query")),
+        })
+    })("search")
+    
     iris.Get("/logout", func(c *iris.Context) {
         c.Session().Clear()
         c.RedirectTo("landing")
