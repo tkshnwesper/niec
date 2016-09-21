@@ -11,6 +11,7 @@ import (
     "niec/common"
     "time"
     "html/template"
+    "bytes"
 )
 
 // Article structure is used for storing data of an article
@@ -38,11 +39,11 @@ var db *sql.DB
 
 // Init Initializes the database
 func Init() {
-    config := common.parse()
+    config := common.ConfigObject.DB
     var (
-        dbName = config.DB.Name
-        dbUser = config.DB.User
-        dbPass = config.DB.Password
+        dbName = config.Name
+        dbUser = config.User
+        dbPass = config.Password
     )
 	var err error
 	db, err = sql.Open("mysql", fmt.Sprintf("%v:%v@/%v", dbUser, dbPass, dbName))
@@ -81,11 +82,41 @@ func InsertUser(
     website string,
 ) bool {
     hashedPassword := fmt.Sprintf("%x", md5.Sum([]byte(password)))
-    stmt, err := db.Prepare("insert into user(email, password, username, dp, bio, created_at, website) values(?, ?, ?, ?, ?, ?, ?)")
+    stmt, err := db.Prepare("insert into user(email, password, username, dp, bio, created_at, website, verified, verifyhash) values(?, ?, ?, ?, ?, ?, ?, ?, ?)")
     a := pe(err)
-    _, err1 := stmt.Exec(email, hashedPassword, username, dp, bio, getDatetime(), website)
+    hash := common.GenerateRandomString(username + email)
+    res, err1 := stmt.Exec(email, hashedPassword, username, dp, bio, getDatetime(), website, false, hash)
     b := pe(err1)
+    id, _ := res.LastInsertId()
+    var buf bytes.Buffer
+    tmpl, err2 := template.New("mail").Parse(common.ReadMD("verify.mail.md"))
+    pe(err2)
+    err3 := tmpl.Execute(&buf, struct {
+        Username, Hash string
+        ID int64
+    }{
+        username,
+        hash,
+        id,
+    })
+    pe(err3)
+    mail := common.GetMarkdown(buf.String())
+    common.MailService.Send("Welcome to Niec!", mail, email)
     return a && b
+}
+
+// VerifyEmail verifies the email of the user
+func VerifyEmail(id int64, hash string) bool {
+    var h string
+    err := db.QueryRow("select verifyhash from user where id = ?", id).Scan(&h)
+    if !pe(err) && h == hash {
+        stmt, err2 := db.Prepare("update user set verified = true where id = ?")
+        pe(err2)
+        _, err3 := stmt.Exec(id)
+        pe(err3)
+        return true
+    }
+    return false
 }
 
 // InsertArticle inserts an article into the database

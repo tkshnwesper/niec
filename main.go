@@ -4,6 +4,7 @@ import (
 	"github.com/kataras/iris"
 	"niec/db"
 	"niec/router"
+	"niec/common"
 	// "github.com/kataras/iris/config"
 )
 
@@ -17,6 +18,7 @@ func main() {
 	// }
 	// conf := def.MergeSingle(man)
 	// iris.Servers.Add(conf)
+	common.Init()
 	router.Init()
 	db.Init()
 	iris.Listen(":8081")

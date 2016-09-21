@@ -81,6 +81,10 @@ func initErrorPages() {
             "Incorrect Captcha",
             "The captcha that you entered was not correct.",
         },
+        "invalid-verification": ErrorContainer {
+            "Invalid Verification",
+            "The verification url was not valid.",
+        },
     }
     
     for s, ec := range errTypes {

@@ -123,6 +123,21 @@ func initSignPages() {
             }
         }
     })
+    
+    iris.Get("/verify/:id/:hash", func(c *iris.Context) {
+        id, err := c.ParamInt64("id")
+        hash := c.Param("hash")
+        if pe(err) {
+            if db.VerifyEmail(id, hash) {
+                c.SetFlash("message", "Email verified successfully!")
+                c.RedirectTo("landing")
+            } else {
+                c.RedirectTo("invalid-verification")
+            }
+        } else {
+            c.EmitError(iris.StatusNotFound)
+        }
+    })
 }
 
 func getCreds(c *iris.Context) (bool, string, string) {
