@@ -38,7 +38,7 @@ var db *sql.DB
 
 // Init Initializes the database
 func Init() {
-    config := parse()
+    config := common.parse()
     var (
         dbName = config.DB.Name
         dbUser = config.DB.User
