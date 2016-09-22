@@ -5,16 +5,24 @@
             Pronounced as Nice
         </p>
     </div>
-    
-    <div class="col-xs-12 col-sm-4 col-sm-offset-4">
-        <a href='{{ urlpath "signin" }}' class="btn btn-default btn-block">
-            Already a member? Log in.
-        </a>
-        <a href='{{ urlpath "signup" }}' class="btn btn-default btn-block">
-            Try us out! Sign up.
-        </a>
-        <a href='{{ urlpath "learn-more" }}' class="btn btn-default btn-block">
-            Learn more.
-        </a>
+    {{ if .Message }}
+    <div class="row">
+        <div class="alert alert-success">
+            <strong>{{ .Message }}</strong>
+        </div>
+    </div>
+    {{ end }}
+    <div class="row">
+        <div class="col-xs-12 col-sm-4 col-sm-offset-4">
+            <a href='{{ urlpath "signin" }}' class="btn btn-default btn-block">
+                Already a member? Log in.
+            </a>
+            <a href='{{ urlpath "signup" }}' class="btn btn-default btn-block">
+                Try us out! Sign up.
+            </a>
+            <a href='{{ urlpath "learn-more" }}' class="btn btn-default btn-block">
+                Learn more.
+            </a>
+        </div>
     </div>
 </div>

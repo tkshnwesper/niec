@@ -39,6 +39,7 @@ func Init() {
     initSubmitPages()
     
     iris.Get("/", func(c *iris.Context) {
+        msg, _ := c.GetFlash("message")
         if isLoggedIn(c) {
             c.Render("home.html", struct {
                 Title string
@@ -50,8 +51,10 @@ func Init() {
         } else {
             c.Render("index.html", struct{
                 Title string
+                Message string
             }{
                 "Welcome to Niec!",
+                msg,
             })
         }
     })("landing")
