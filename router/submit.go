@@ -44,7 +44,7 @@ func initSubmitPages() {
                 Fields []Field
                 Buttons []Button
             } {
-                "Submit an article",
+                "Submit an Article",
                 "",
                 Fields,
                 buttons,
@@ -73,6 +73,7 @@ func initSubmitPages() {
                 if !success {
                     c.EmitError(iris.StatusInternalServerError)
                 } else {
+                    c.SetFlash("message", "Article submitted successfully!")
                     c.RedirectTo("article", id)
                 }
             } else {
