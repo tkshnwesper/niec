@@ -25,7 +25,9 @@ var ConfigObject Config
 // MailService provides feature to send mail
 var MailService mail.Service
 
-// Pe returns whether an error is real or not and prints fatal output if it is
+// Pe returns whether an error is real or not and prints output if it is
+// false if there is error
+// true if there is no error
 func Pe(err error) bool {
     if err != nil {
         log.Print(err)

@@ -6,5 +6,5 @@ Kindly verify your email,
 
 http://niec.cryf.in/verify/{{ .ID }}/{{ .Hash }}
 
-**Regards**,
+##### Regards,
 _Saurabh_

@@ -109,7 +109,7 @@ func InsertUser(
 func VerifyEmail(id int64, hash string) bool {
     var h string
     err := db.QueryRow("select verifyhash from user where id = ?", id).Scan(&h)
-    if !pe(err) && h == hash {
+    if pe(err) && h == hash {
         stmt, err2 := db.Prepare("update user set verified = true where id = ?")
         pe(err2)
         _, err3 := stmt.Exec(id)
