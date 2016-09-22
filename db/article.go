@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	_ "github.com/go-sql-driver/mysql"  // required by sql package to support mysql
     "niec/common"
-    "html/template" 
+    "html/template"
 )
 
 // InsertArticle inserts an article into the database
@@ -61,8 +61,7 @@ func GetArticle(id int64) Article {
     )
     art.Text = template.HTML(common.GetMarkdown(text))
     pe(err)
-    err2 := db.QueryRow("select username from user where id = ?", art.UserID).Scan(&art.Username)
-    pe(err2)
+    art.Username = GetUsernameFromID(art.UserID)
     return art
 }
 
