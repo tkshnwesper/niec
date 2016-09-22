@@ -63,7 +63,7 @@ func initErrorPages() {
         },
         "email-already-exists": ErrorContainer {
             "Email Already Exists",
-            "This email address already exists on our database.",
+            "This email address already exists in our database.",
         },
         "username-already-taken": ErrorContainer {
             "Username already taken",
@@ -75,7 +75,7 @@ func initErrorPages() {
         },
         "user-does-not-exist": ErrorContainer {
             "User does not exist",
-            "The user with that email address does not exist on our database.",
+            "The user with that email address does not exist in our database.",
         },
         "incorrect-captcha": ErrorContainer {
             "Incorrect Captcha",

@@ -1,0 +1,79 @@
+package db
+
+import (
+	"database/sql"
+	_ "github.com/go-sql-driver/mysql"  // required by sql package to support mysql
+    "niec/common"
+    "html/template" 
+)
+
+// InsertArticle inserts an article into the database
+func InsertArticle(username, title, _, body string) bool {
+    stmt, err := db.Prepare("insert into article(created_at, title, text, user_id) values(?, ?, ?, ?)")
+    a := pe(err)
+    _, err1 := stmt.Exec(getDatetime(), title, body, GetUserID(username))
+    b := pe(err1)
+    return a && b
+}
+
+// getArticlesFromRows returns complete Article objects on a rows input
+// it fills in the username
+func getArticlesFromRows(rows *sql.Rows) []Article {
+    var articles []Article
+    for rows.Next() {
+        var art Article
+        var text string
+        rows.Scan(
+            &art.ID,
+            &art.Title,
+            &text,
+            &art.CreatedAt,
+            &art.UserID,
+        )
+        art.Text = template.HTML(common.GetMarkdown(text))
+        art.Username = GetUsernameFromID(art.UserID)
+        articles = append(articles, art)
+    }
+    return articles
+}
+
+// GetLatestArticles returns a number of recent articles
+func GetLatestArticles() []Article {
+    stmt, err := db.Prepare("select id, title, text, created_at, user_id from article order by created_at desc")
+    pe(err)
+    defer stmt.Close()
+    rows, err2 := stmt.Query()
+    pe(err2)
+    defer rows.Close()
+    return getArticlesFromRows(rows)
+}
+
+// GetArticle returns the article with the specified id
+func GetArticle(id int64) Article {
+    var art Article
+    var text string
+    err := db.QueryRow("select id, title, text, created_at, user_id from article where id = ?", id).Scan(
+        &art.ID,
+        &art.Title,
+        &text,
+        &art.CreatedAt,
+        &art.UserID,
+    )
+    art.Text = template.HTML(common.GetMarkdown(text))
+    pe(err)
+    err2 := db.QueryRow("select username from user where id = ?", art.UserID).Scan(&art.Username)
+    pe(err2)
+    return art
+}
+
+// SearchArticles searches in the database for articles that match
+// the passed query, and return article objects.
+func SearchArticles(query string) []Article {
+    stmt, err := db.Prepare("select id, title, text, created_at, user_id from article where title like \"%" + query + "%\" or text like \"%" + query + "%\"")
+    pe(err)
+    defer stmt.Close()
+    rows, err2 := stmt.Query()
+    pe(err2)
+    defer rows.Close()
+    return getArticlesFromRows(rows)
+}
