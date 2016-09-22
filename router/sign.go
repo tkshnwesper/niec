@@ -119,6 +119,8 @@ func initSignPages() {
             } else {
                 // Session cleared after successful signup
                 c.Session().Clear()
+                c.SetFlash("message", "Awesome! You have signed up. Just one more step, click on the verification link that we sent you.")
+                c.SetFlash("messageType", "info")
                 c.RedirectTo("landing")
             }
         }
@@ -130,6 +132,7 @@ func initSignPages() {
         if pe(err) {
             if db.VerifyEmail(id, hash) {
                 c.SetFlash("message", "Email verified successfully!")
+                c.SetFlash("messageType", "success")
                 c.RedirectTo("landing")
             } else {
                 c.RedirectTo("invalid-verification")

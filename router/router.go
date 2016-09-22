@@ -40,6 +40,7 @@ func Init() {
     
     iris.Get("/", func(c *iris.Context) {
         msg, _ := c.GetFlash("message")
+        typ, _ := c.GetFlash("messageType")
         if isLoggedIn(c) {
             c.Render("home.html", struct {
                 Title string
@@ -52,9 +53,11 @@ func Init() {
             c.Render("index.html", struct{
                 Title string
                 Message string
+                MessageType string
             }{
                 "Welcome to Niec!",
                 msg,
+                typ,
             })
         }
     })("landing")
