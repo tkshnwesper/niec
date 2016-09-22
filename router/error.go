@@ -34,7 +34,7 @@ func initErrorPages() {
     iris.OnError(iris.StatusNotFound, func(c *iris.Context) {
         buildErrorPage(c, ErrorContainer {
             "404",
-            "Sorry! The page you requested could not be found.",
+            iris.StatusText(iris.StatusNotFound),
         })
     })
     
@@ -48,6 +48,13 @@ func initErrorPages() {
     iris.OnError(iris.StatusForbidden, func(c *iris.Context) {
         buildErrorPage(c, ErrorContainer {
             "403",
+            "Please sign in first.",
+        })
+    })
+    
+    iris.OnError(iris.StatusUnauthorized, func(c *iris.Context) {
+        buildErrorPage(c, ErrorContainer {
+            "401",
             "Please sign in first.",
         })
     })

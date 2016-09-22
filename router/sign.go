@@ -67,24 +67,28 @@ func initSignPages() {
                 "username",
                 "Username",
                 25,
+                "",
             },
             {
                 "password",
                 "retype",
                 "Retype password",
                 -1,
+                "",
             },
             {
                 "url",
                 "dp",
                 "Display picture URL (Optional)",
                 255,
+                "",
             },
             {
                 "url",
                 "website",
                 "Website (Optional)",
                 255,
+                "",
             },
         }
         c.Render("sign.up.next.html", struct{
@@ -164,12 +168,14 @@ func renderSign(c *iris.Context, title, action string) {
             "email",
             "Email Address",
             255,
+            "",
         },
         {
             "password",
             "password",
             "Password",
             -1,
+            "",
         },
     }
     c.Render("sign.html", struct{

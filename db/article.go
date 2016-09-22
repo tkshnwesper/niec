@@ -76,3 +76,25 @@ func SearchArticles(query string) []Article {
     defer rows.Close()
     return getArticlesFromRows(rows)
 }
+
+// GetArticleUserID returns the user ID of the creator of that article
+func GetArticleUserID(id int64) int64 {
+    var uid int64
+    err := db.QueryRow("select user_id from article where id = ?", id).Scan(&uid)
+    pe(err)
+    return uid
+}
+
+// FetchForEdit fetches the data required by the edit page
+func FetchForEdit(id int64) (string, string) {
+    var title, text string
+    err := db.QueryRow("select title, text from article where id = ?", id).Scan(&title, &text)
+    pe(err)
+    return title, text
+}
+
+// EditArticle writes the edits back to the database
+func EditArticle(id int64, title, text string) bool {
+    _, err := db.Exec("update article set title = ?, text = ? where id = ?", title, text, id)
+    return pe(err)
+}

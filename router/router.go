@@ -22,6 +22,7 @@ type Field struct {
     Name string
     Placeholder string
     MaxSize int
+    Value string
 }
 
 // Init helps to initialize all the pages required in the site
@@ -77,12 +78,14 @@ func Init() {
         if err != nil {
             c.EmitError(iris.StatusNotFound)
         } else {
+            msg, _ := c.GetFlash("message")
             art := db.GetArticle(id)
             c.Render("article.html", struct {
-                Title string
+                Title, Message string
                 Article db.Article
             }{
                 art.Title,
+                msg,
                 art,
             })
         }
