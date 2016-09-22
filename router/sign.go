@@ -38,11 +38,14 @@ func initSignPages() {
         if verifyCaptcha(c) {
             if res, email, password := getCreds(c); res {
                 if db.CheckEmailExists(email) {
-                    if db.VerifyCreds(email, password) {
+                    creds, verified := db.VerifyCreds(email, password)
+                    if creds && verified {
                         // Session cleared after successful signin
                         c.Session().Clear()
                         c.Session().Set(common.UserIdentificationAttribute, db.GetUsername(email))
                         c.RedirectTo("landing")
+                    } else if !verified {
+                        c.RedirectTo("email-not-verified")
                     } else {
                         c.RedirectTo("invalid-credentials")
                     }
@@ -131,7 +134,7 @@ func initSignPages() {
         hash := c.Param("hash")
         if pe(err) {
             if db.VerifyEmail(id, hash) {
-                c.SetFlash("message", "Email verified successfully!")
+                c.SetFlash("message", "Email verified successfully! You can now log into your account.")
                 c.SetFlash("messageType", "success")
                 c.RedirectTo("landing")
             } else {

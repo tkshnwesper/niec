@@ -85,6 +85,10 @@ func initErrorPages() {
             "Invalid Verification",
             "The verification url was not valid.",
         },
+        "email-not-verified": ErrorContainer {
+            "Email Not Verified",
+            "Please verify your email by clicking on the link in the email that we sent to you.",
+        },
     }
     
     for s, ec := range errTypes {

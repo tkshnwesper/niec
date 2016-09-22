@@ -129,14 +129,17 @@ func InsertArticle(username, title, _, body string) bool {
 }
 
 // VerifyCreds verifies whether the email and password match
-func VerifyCreds(email string, password string) bool {
+func VerifyCreds(email string, password string) (bool, bool) {
     var pass string
-    err := db.QueryRow("select password from user where email = ?", email).Scan(&pass)
+    var verified bool
+    err := db.QueryRow("select password, verified from user where email = ?", email).Scan(&pass, &verified)
     pe(err)
-    if fmt.Sprintf("%x", md5.Sum([]byte(password))) == pass {
-        return true
+    if fmt.Sprintf("%x", md5.Sum([]byte(password))) == pass && verified {
+        return true, true
+    } else if !verified {
+        return true, false
     }
-    return false
+    return false, false
 }
 
 // GetUsername returns the username of a user when email is passed to it

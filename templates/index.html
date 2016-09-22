@@ -1,10 +1,4 @@
 <div class="container">
-    <div class="jumbotron">
-        <h1>Niec</h1>
-        <p>
-            Pronounced as Nice
-        </p>
-    </div>
     {{ if .Message }}
     <div class="row">
         <div class="alert alert-{{ .MessageType }} alert-dismissible" role="alert">
@@ -13,6 +7,12 @@
         </div>
     </div>
     {{ end }}
+    <div class="jumbotron">
+        <h1>Niec</h1>
+        <p>
+            Pronounced as Nice
+        </p>
+    </div>
     <div class="row">
         <div class="col-xs-12 col-sm-4 col-sm-offset-4">
             <a href='{{ urlpath "signin" }}' class="btn btn-default btn-block">
