@@ -64,13 +64,16 @@ func initSubmitPages() {
                 c.SetFlash("text", text)
                 c.RedirectTo("preview")
             } else if action == "submit" {
-                if !db.InsertArticle(
+                id, success := db.InsertArticle(
                     c.Session().GetString(common.UserIdentificationAttribute), 
                     title, 
                     tags, 
                     text,
-                ) {
+                )
+                if !success {
                     c.EmitError(iris.StatusInternalServerError)
+                } else {
+                    c.RedirectTo("article", id)
                 }
             } else {
                 c.EmitError(iris.StatusNotFound)

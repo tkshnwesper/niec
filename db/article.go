@@ -8,12 +8,13 @@ import (
 )
 
 // InsertArticle inserts an article into the database
-func InsertArticle(username, title, _, body string) bool {
+func InsertArticle(username, title, _, body string) (int64, bool) {
     stmt, err := db.Prepare("insert into article(created_at, title, text, user_id) values(?, ?, ?, ?)")
     a := pe(err)
-    _, err1 := stmt.Exec(getDatetime(), title, body, GetUserID(username))
+    res, err1 := stmt.Exec(getDatetime(), title, body, GetUserID(username))
     b := pe(err1)
-    return a && b
+    id, _ := res.LastInsertId()
+    return id, a && b
 }
 
 // getArticlesFromRows returns complete Article objects on a rows input
