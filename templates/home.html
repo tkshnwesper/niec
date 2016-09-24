@@ -16,8 +16,8 @@
                     <span aria-hidden="true">&laquo;</span>
                 </a>
             </li>
-            {{ $i, $el := range .Pages }}
-            <li><a href='{{ urlpath "landing" "?page=" $el }}'></a></li>
+            {{ range $i, $el := .Pages }}
+            <li><a href='{{ urlpath "landing" }}?page={{ $el }}'>{{ $el }}</a></li>
             {{ end }}
             <li>
                 <a href="#" aria-label="Next">

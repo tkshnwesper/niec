@@ -55,36 +55,7 @@ func Init() {
             if !pe(err) || page < 0 {
                 c.RedirectTo("landing")
             } else {
-                if page == 0 {
-                    page++
-                }
-                maxart := db.GetArticleCount()
-                totpage := int(maxart / common.ArticlesPerPage)
-                if maxart % common.ArticlesPerPage != 0 {
-                    totpage++
-                }
-                minthresh := common.PaginationWindow / 2
-                maxthresh := totpage - minthresh
-                var pages []int
-                if page > minthresh && page < maxthresh {
-                    for i := page - minthresh; i <= page + minthresh; i++ {
-                        pages = append(pages, i)
-                    }
-                } else if page < minthresh {
-                    var max int
-                    if totpage - common.PaginationWindow > 0 {
-                        max = common.PaginationWindow
-                    } else {
-                        max = totpage
-                    }
-                    for i := 1; i <= max; i++ {
-                        pages = append(pages, i)
-                    }
-                } else {
-                    for i := totpage - common.PaginationWindow; i <= totpage; i++ {
-                        pages = append(pages, i)
-                    }
-                }
+                pages := common.Pagination(page, common.PaginationWindow, common.ArticlesPerPage, db.GetArticleCount())
                 c.Render("home.html", struct {
                     Title string
                     Articles []db.Article

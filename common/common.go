@@ -109,3 +109,41 @@ func GenerateRandomString(salt string) string {
     m := fmt.Sprintf("%x", md5.Sum([]byte(salt)))
     return StrShuffle(m + fmt.Sprintf("%d", time.Now().Nanosecond()))
 }
+
+// Pagination returns an array of integers which will be the page's current pagination
+func Pagination(page, paginationWindow, articlesPerPage int, maxart int64) []int {
+    if page == 0 {
+        page++
+    }
+    totpage := int(maxart / int64(articlesPerPage))
+    if maxart % int64(articlesPerPage) != 0 {
+        totpage++
+    }
+    minthresh := paginationWindow / 2
+    maxthresh := totpage - minthresh
+    var pages []int
+    if page > minthresh && page < maxthresh {
+        for i := page - minthresh; i <= page + minthresh; i++ {
+            pages = append(pages, i)
+        }
+    } else if page < minthresh {
+        var max int
+        if totpage - paginationWindow > 0 {
+            max = paginationWindow
+        } else {
+            max = totpage
+        }
+        for i := 1; i <= max; i++ {
+            pages = append(pages, i)
+        }
+    } else {
+        start := totpage - paginationWindow
+        if start < 0 {
+            start = 1
+        }
+        for i := start; i <= totpage; i++ {
+            pages = append(pages, i)
+        }
+    }
+    return pages
+}
