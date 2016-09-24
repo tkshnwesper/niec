@@ -41,7 +41,7 @@ func getArticlesFromRows(rows *sql.Rows) []Article {
 // GetLatestArticles returns a number of recent articles
 func GetLatestArticles(page int) []Article {
     offset := (page - 1) * common.ArticlesPerPage
-    limit := page * common.ArticlesPerPage
+    limit := common.ArticlesPerPage
     stmt, err := db.Prepare("select id, title, text, created_at, user_id from article order by created_at desc limit ? offset ?")
     pe(err)
     defer stmt.Close()

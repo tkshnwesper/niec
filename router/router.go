@@ -43,7 +43,7 @@ func Init() {
     iris.Get("/", func(c *iris.Context) {
         msg, _ := c.GetFlash("message")
         typ, _ := c.GetFlash("messageType")
-        if !isLoggedIn(c) {
+        if isLoggedIn(c) {
             formPage := c.FormValueString("page")
             var page int
             var err error
@@ -52,20 +52,29 @@ func Init() {
             } else {
                 page, err = strconv.Atoi(formPage)
             }
-            if !pe(err) || page < 0 {
+            app, count := int64(common.ArticlesPerPage), db.GetArticleCount()
+            numpages := count / app
+            if count % app != 0 {
+                numpages++
+            }
+            if !pe(err) || page < 1 || int64(page) > numpages {
                 c.RedirectTo("landing")
             } else {
-                pages := common.Pagination(page, common.PaginationWindow, common.ArticlesPerPage, db.GetArticleCount())
+                pages := common.Pagination(page, common.PaginationWindow, common.ArticlesPerPage, count)
                 c.Render("home.html", struct {
                     Title string
                     Articles []db.Article
                     Page int
                     Pages []int
+                    Increment func(int)(int)
+                    Decrement func(int)(int)
                 }{
                     "Niec :: Home",
                     db.GetLatestArticles(page),
                     page,
                     pages,
+                    common.Increment,
+                    common.Decrement,
                 })
             }
         } else {

@@ -147,3 +147,13 @@ func Pagination(page, paginationWindow, articlesPerPage int, maxart int64) []int
     }
     return pages
 }
+
+// Increment adds one
+func Increment(num int) int {
+    return num + 1
+}
+
+// Decrement subtracts one
+func Decrement(num int) int {
+    return num - 1
+}
