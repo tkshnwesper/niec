@@ -15,4 +15,7 @@
             {{ $article.Text }}
         </div>
     </article>
+    <div>
+        <a href='{{ urlpath "edit-article" $article.ID }}' class="btn btn-default">Edit</a>
+    </div>
 </div>

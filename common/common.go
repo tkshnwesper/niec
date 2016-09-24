@@ -15,6 +15,13 @@ import (
     "fmt"
 )
 
+// PaginationWindow is the number of numbers that you will be able to see at any point in time
+// in the pagination
+const PaginationWindow = 5
+
+// ArticlesPerPage is the number of articles that are displayed per page.
+const ArticlesPerPage = 1
+
 // UserIdentificationAttribute will be stored in the server session in order to identify the user
 // It should be something that uniquely identifies the user, for example: user_id, username or email
 const UserIdentificationAttribute = "username"

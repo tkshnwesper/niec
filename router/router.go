@@ -7,6 +7,7 @@ import (
     "html/template"
     "niec/common"
     "niec/db"
+    "strconv"
 )
 
 // Button holds information about the buttons to be displayed in the view
@@ -42,16 +43,62 @@ func Init() {
     iris.Get("/", func(c *iris.Context) {
         msg, _ := c.GetFlash("message")
         typ, _ := c.GetFlash("messageType")
-        if isLoggedIn(c) {
-            c.Render("home.html", struct {
-                Title string
-                Articles []db.Article
-            }{
-                "Niec :: Home",
-                db.GetLatestArticles(),
-            })
+        if !isLoggedIn(c) {
+            formPage := c.FormValueString("page")
+            var page int
+            var err error
+            if formPage == "" {
+                page = 1
+            } else {
+                page, err = strconv.Atoi(formPage)
+            }
+            if !pe(err) || page < 0 {
+                c.RedirectTo("landing")
+            } else {
+                if page == 0 {
+                    page++
+                }
+                maxart := db.GetArticleCount()
+                totpage := int(maxart / common.ArticlesPerPage)
+                if maxart % common.ArticlesPerPage != 0 {
+                    totpage++
+                }
+                minthresh := common.PaginationWindow / 2
+                maxthresh := totpage - minthresh
+                var pages []int
+                if page > minthresh && page < maxthresh {
+                    for i := page - minthresh; i <= page + minthresh; i++ {
+                        pages = append(pages, i)
+                    }
+                } else if page < minthresh {
+                    var max int
+                    if totpage - common.PaginationWindow > 0 {
+                        max = common.PaginationWindow
+                    } else {
+                        max = totpage
+                    }
+                    for i := 1; i <= max; i++ {
+                        pages = append(pages, i)
+                    }
+                } else {
+                    for i := totpage - common.PaginationWindow; i <= totpage; i++ {
+                        pages = append(pages, i)
+                    }
+                }
+                c.Render("home.html", struct {
+                    Title string
+                    Articles []db.Article
+                    Page int
+                    Pages []int
+                }{
+                    "Niec :: Home",
+                    db.GetLatestArticles(page),
+                    page,
+                    pages,
+                })
+            }
         } else {
-            c.Render("index.html", struct{
+            c.Render("index.html", struct {
                 Title string
                 Message string
                 MessageType string

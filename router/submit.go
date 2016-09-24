@@ -129,6 +129,7 @@ func initSubmitPages() {
                         // },
                     }
                     c.Render("submit.html", struct {
+                        // Do not make Textarea into a template.HTML
                         Title, Textarea string
                         Fields []Field
                         Buttons []Button
@@ -145,7 +146,7 @@ func initSubmitPages() {
         } else {
             c.EmitError(iris.StatusUnauthorized)
         }
-    })
+    })("edit-article")
     
     iris.Post("/article/:id/edit", func(c *iris.Context) {
         if isLoggedIn(c) {

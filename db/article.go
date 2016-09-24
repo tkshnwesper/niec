@@ -39,11 +39,13 @@ func getArticlesFromRows(rows *sql.Rows) []Article {
 }
 
 // GetLatestArticles returns a number of recent articles
-func GetLatestArticles() []Article {
-    stmt, err := db.Prepare("select id, title, text, created_at, user_id from article order by created_at desc")
+func GetLatestArticles(page int) []Article {
+    stmt, err := db.Prepare("select id, title, text, created_at, user_id from article order by created_at desc offset ? limit ?")
     pe(err)
     defer stmt.Close()
-    rows, err2 := stmt.Query()
+    offset := (page - 1) * common.ArticlesPerPage
+    limit := page * common.ArticlesPerPage
+    rows, err2 := stmt.Query(offset, limit)
     pe(err2)
     defer rows.Close()
     return getArticlesFromRows(rows)
@@ -98,4 +100,11 @@ func FetchForEdit(id int64) (string, string) {
 func EditArticle(id int64, title, text string) bool {
     _, err := db.Exec("update article set title = ?, text = ? where id = ?", title, text, id)
     return pe(err)
+}
+
+func GetArticleCount() int64 {
+    var num int64
+    err := db.QueryRow("select count(*) from article where 1").Scan(&num)
+    pe(err)
+    return num
 }
