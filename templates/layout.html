@@ -14,6 +14,7 @@
         <script type="text/javascript" src="/static/js/layout.js"></script>
     </head>
     <body>
+        {{ $p := .Property }}
         <div id="top-container">
             <nav class="navbar navbar-inverse navbar-static-top">
                 <div class="container-fluid">
@@ -35,10 +36,14 @@
                     
                     <div class="navbar-collapse collapse" id="navbar-collapse-id">
                         <ul class="nav navbar-nav">
+                            {{ if $p.LoggedIn }}
                             <li><a href='{{ urlpath "submit" }}'>Write</a></li>
+                            {{ end }}
                         </ul>
                         <ul class="nav navbar-nav navbar-right">
+                            {{ if $p.LoggedIn }}
                             <li><a href='{{ urlpath "logout" }}'>Logout</a></li>
+                            {{ end }}
                         </ul>
                     </div>
 

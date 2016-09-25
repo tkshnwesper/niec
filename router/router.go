@@ -42,7 +42,7 @@ func Init() {
     iris.Get("/", func(c *iris.Context) {
         msg, _ := c.GetFlash("message")
         typ, _ := c.GetFlash("messageType")
-        if !isLoggedIn(c) {
+        if isLoggedIn(c) {
             formPage := c.FormValueString("page")
             count := db.GetArticleCount()
             page, b := common.ValidPagination(formPage, count, common.ArticlesPerPage)
@@ -52,6 +52,7 @@ func Init() {
                 pages := common.Pagination(page, common.PaginationWindow, common.ArticlesPerPage, count)
                 c.Render("home.html", struct {
                     Title string
+                    Property Property
                     Articles []db.Article
                     Page int
                     Pages []int
@@ -60,6 +61,7 @@ func Init() {
                     URL string
                 }{
                     "Niec :: Home",
+                    getProperty(c),
                     db.GetLatestArticles(page),
                     page,
                     pages,
@@ -188,4 +190,15 @@ func getUserID(c *iris.Context) int64 {
     }
     return 0
 }
+
+func getProperty(c *iris.Context) Property {
+    p := c.Session().Get("property")
+    if p != nil {
+        return p.(Property)
+    }
+    return Property {
+        LoggedIn: false,
+    }
+}
+
 var pe = common.Pe

@@ -130,10 +130,12 @@ func initSubmitPages() {
                     }
                     c.Render("submit.html", struct {
                         // Do not make Textarea into a template.HTML
+                        Property Property
                         Title, Textarea string
                         Fields []Field
                         Buttons []Button
                     }{
+                        getProperty(c),
                         "Edit Article",
                         text,
                         Fields,
