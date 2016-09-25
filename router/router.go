@@ -166,7 +166,26 @@ func Init() {
 }
 
 func isLoggedIn(c *iris.Context) bool {
-    return c.Session().GetString(common.UserIdentificationAttribute) != ""
+    p := c.Session().Get("property")
+    if p != nil {
+        return p.(Property).LoggedIn
+    }
+    return false
 }
 
+func getUsername(c *iris.Context) string {
+    p := c.Session().Get("property")
+    if p != nil {
+        return p.(Property).Username
+    }
+    return ""
+}
+
+func getUserID(c *iris.Context) int64 {
+    p := c.Session().Get("property")
+    if p != nil {
+        return p.(Property).UserID
+    }
+    return 0
+}
 var pe = common.Pe

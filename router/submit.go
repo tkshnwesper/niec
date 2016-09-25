@@ -65,9 +65,9 @@ func initSubmitPages() {
                 c.RedirectTo("preview")
             } else if action == "submit" {
                 id, success := db.InsertArticle(
-                    c.Session().GetString(common.UserIdentificationAttribute), 
-                    title, 
-                    tags, 
+                    getUserID(c),
+                    title,
+                    tags,
                     text,
                 )
                 if !success {
@@ -99,7 +99,7 @@ func initSubmitPages() {
             if !pe(err) {
                 c.EmitError(iris.StatusNotFound)
             } else {
-                if db.GetUserID(c.Session().GetString(common.UserIdentificationAttribute)) == db.GetArticleUserID(id) {
+                if getUserID(c) == db.GetArticleUserID(id) {
                     title, text := db.FetchForEdit(id)
                     buttons := []Button {
                         {
@@ -156,7 +156,7 @@ func initSubmitPages() {
             if !pe(err) {
                 c.EmitError(iris.StatusNotFound)
             } else {
-                if db.GetUserID(c.Session().GetString(common.UserIdentificationAttribute)) == db.GetArticleUserID(id) {
+                if getUserID(c) == db.GetArticleUserID(id) {
                     if db.EditArticle(id, title, text) {
                         c.SetFlash("message", "Article updated successfully!")
                         c.RedirectTo("article", id)

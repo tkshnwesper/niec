@@ -108,21 +108,21 @@ func VerifyCreds(email string, password string) (bool, bool) {
     return false, false
 }
 
-// GetUsername returns the username of a user when email is passed to it
-func GetUsername(email string) string {
-    var un string
-    err := db.QueryRow("select username from user where email = ?", email).Scan(&un)
-    pe(err)
-    return un
-}
+// // GetUsername returns the username of a user when email is passed to it
+// func GetUsername(email string) string {
+//     var un string
+//     err := db.QueryRow("select username from user where email = ?", email).Scan(&un)
+//     pe(err)
+//     return un
+// }
 
-// GetUserID returns the userID of the user whose username is passed to it
-func GetUserID(username string) int64 {
-    var id int64
-    err := db.QueryRow("select id from user where username = ?", username).Scan(&id)
-    pe(err)
-    return id
-}
+// // GetUserID returns the userID of the user whose username is passed to it
+// func GetUserID(username string) int64 {
+//     var id int64
+//     err := db.QueryRow("select id from user where username = ?", username).Scan(&id)
+//     pe(err)
+//     return id
+// }
 
 // GetUsernameFromID returns the username of a user from their ID
 func GetUsernameFromID(id int64) string {
@@ -130,4 +130,13 @@ func GetUsernameFromID(id int64) string {
     err3 := db.QueryRow("select username from user where id = ?", id).Scan(&un)
     pe(err3)
     return un
+}
+
+// GetUsernameAndID returns both username and ID from user table based on email
+func GetUsernameAndID(email string) (string, int64) {
+    var un string
+    var id int64
+    err := db.QueryRow("select username, id from user where email = ?", email).Scan(&un, &id)
+    pe(err)
+    return un, id
 }

@@ -4,8 +4,14 @@ import (
     "niec/db"
     "github.com/kataras/iris"
     "github.com/dchest/captcha"
-    "niec/common"
 )
+
+// Property iss a container that carries all the information required by a user
+type Property struct {
+    LoggedIn bool
+    Username string
+    UserID int64
+}
 
 func initSignPages() {
     iris.Get("/sign/up", func(c *iris.Context) {
@@ -42,7 +48,9 @@ func initSignPages() {
                     if creds && verified {
                         // Session cleared after successful signin
                         c.Session().Clear()
-                        c.Session().Set(common.UserIdentificationAttribute, db.GetUsername(email))
+                        // c.Session().Set(common.UserIdentificationAttribute, db.GetUsername(email))
+                        un, id := db.GetUsernameAndID(email)
+                        c.Session().Set("property", Property { true, un, id })
                         c.RedirectTo("landing")
                     } else if !verified {
                         c.RedirectTo("email-not-verified")
