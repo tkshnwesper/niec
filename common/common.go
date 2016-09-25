@@ -13,6 +13,7 @@ import (
     "crypto/md5"
     "time"
     "fmt"
+    "strconv"
 )
 
 // PaginationWindow is the number of numbers that you will be able to see at any point in time
@@ -20,7 +21,7 @@ import (
 const PaginationWindow = 5
 
 // ArticlesPerPage is the number of articles that are displayed per page.
-const ArticlesPerPage = 1
+const ArticlesPerPage = 10
 
 // UserIdentificationAttribute will be stored in the server session in order to identify the user
 // It should be something that uniquely identifies the user, for example: user_id, username or email
@@ -146,6 +147,23 @@ func Pagination(page, paginationWindow, articlesPerPage int, maxart int64) []int
         }
     }
     return pages
+}
+
+// ValidPagination tells whether the page passed is valid
+func ValidPagination(formPage string, count0 int64, articlesPerPage int) (int, bool) {
+    var page int
+    var err error
+    if formPage == "" {
+        page = 1
+    } else {
+        page, err = strconv.Atoi(formPage)
+    }
+    app, count := int64(articlesPerPage), count0
+    numpages := count / app
+    if count % app != 0 {
+        numpages++
+    }
+    return page, !Pe(err) || page < 1 || int64(page) > numpages
 }
 
 // Increment adds one

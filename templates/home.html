@@ -1,43 +1,6 @@
 <div class="container">
-    {{ range $article := .Articles }}
-    <article>
-        <h1><small><a href='{{ urlpath "article" $article.ID }}'>#{{ $article.ID }}</a></small> {{ $article.Title }}</h1>
-        <h4>by <a href='{{ urlpath "user" $article.UserID }}'>{{ $article.Username }}</a> <small>on {{ $article.CreatedAt }}</small></h4>
-        <div class="text">
-            {{ $article.Text }}
-        </div>
-    </article>
-    {{ end }}
+    {{ render "partial/article.html" }}
     
-    <nav aria-label="Page navigation">
-        <ul class="pagination">
-            {{ if eq .Page 1 }}
-            <li class="disabled">
-            {{ else }}
-            <li>
-            {{ end }}
-                <a href='{{ urlpath "landing" }}?page={{ call .Decrement .Page }}' aria-label="Previous">
-                    <span aria-hidden="true">&laquo;</span>
-                </a>
-            </li>
-
-            {{ range $i, $el := .Pages }}
-            <li><a href='{{ urlpath "landing" }}?page={{ $el }}'>{{ $el }}</a></li>
-            {{ end }}
-            
-            {{ $num := len .Pages }}
-            {{ $ind := call .Decrement $num }}
-            {{ $last := index .Pages $ind }}
-            {{ if eq $last .Page }}
-            <li class="disabled">
-            {{ else }}
-            <li>
-            {{ end }} 
-                <a href='{{ urlpath "landing" }}?page={{ call .Increment .Page }}' aria-label="Next">
-                    <span aria-hidden="true">&raquo;</span>
-                </a>
-            </li>
-        </ul>
-    </nav>
+    {{ render "partial/pagination.html" }}
             
 </div>

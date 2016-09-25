@@ -1,0 +1,9 @@
+{{ range $article := .Articles }}
+<article>
+    <h1><small><a href='{{ urlpath "article" $article.ID }}'>#{{ $article.ID }}</a></small> {{ $article.Title }}</h1>
+    <h4>by <a href='{{ urlpath "user" $article.UserID }}'>{{ $article.Username }}</a> <small>on {{ $article.CreatedAt }}</small></h4>
+    <div class="text">
+        {{ $article.Text }}
+    </div>
+</article>
+{{ end }}

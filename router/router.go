@@ -7,7 +7,6 @@ import (
     "html/template"
     "niec/common"
     "niec/db"
-    "strconv"
 )
 
 // Button holds information about the buttons to be displayed in the view
@@ -43,21 +42,11 @@ func Init() {
     iris.Get("/", func(c *iris.Context) {
         msg, _ := c.GetFlash("message")
         typ, _ := c.GetFlash("messageType")
-        if isLoggedIn(c) {
+        if !isLoggedIn(c) {
             formPage := c.FormValueString("page")
-            var page int
-            var err error
-            if formPage == "" {
-                page = 1
-            } else {
-                page, err = strconv.Atoi(formPage)
-            }
-            app, count := int64(common.ArticlesPerPage), db.GetArticleCount()
-            numpages := count / app
-            if count % app != 0 {
-                numpages++
-            }
-            if !pe(err) || page < 1 || int64(page) > numpages {
+            count := db.GetArticleCount()
+            page, b := common.ValidPagination(formPage, count, common.ArticlesPerPage)
+            if b {
                 c.RedirectTo("landing")
             } else {
                 pages := common.Pagination(page, common.PaginationWindow, common.ArticlesPerPage, count)
@@ -68,6 +57,7 @@ func Init() {
                     Pages []int
                     Increment func(int)(int)
                     Decrement func(int)(int)
+                    URL string
                 }{
                     "Niec :: Home",
                     db.GetLatestArticles(page),
@@ -75,6 +65,7 @@ func Init() {
                     pages,
                     common.Increment,
                     common.Decrement,
+                    "",
                 })
             }
         } else {
@@ -135,13 +126,33 @@ func Init() {
     })("user")
     
     iris.Get("/search", func(c *iris.Context) {
-        c.Render("search.html", struct {
-            Title string
-            Articles []db.Article
-        }{
-            "Niec :: Search",
-            db.SearchArticles(c.FormValueString("query")),
-        })
+        formPage := c.FormValueString("page")
+        query := c.FormValueString("query")
+        count := db.GetArticleCount()
+        page, b := common.ValidPagination(formPage, count, common.ArticlesPerPage)
+        if b {
+            c.RedirectTo("search")
+        } else {
+            pages := common.Pagination(page, common.PaginationWindow, common.ArticlesPerPage, count)
+            
+            c.Render("search.html", struct {
+                Title string
+                Articles []db.Article
+                Page int
+                Pages []int
+                Increment func(int)(int)
+                Decrement func(int)(int)
+                URL string
+            }{
+                "Niec :: Search",
+                db.SearchArticles(query),
+                page,
+                pages,
+                common.Increment,
+                common.Decrement,
+                "query=" + query + "&",
+            })
+        }
     })("search")
     
     iris.Get("/logout", func(c *iris.Context) {
