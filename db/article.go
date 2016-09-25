@@ -105,6 +105,7 @@ func EditArticle(id int64, title, text string) bool {
     return pe(err)
 }
 
+// GetArticleCount counts the total number of articles present in the article table
 func GetArticleCount() int64 {
     var num int64
     err := db.QueryRow("select count(*) from article where 1").Scan(&num)
