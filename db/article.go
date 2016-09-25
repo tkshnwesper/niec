@@ -70,11 +70,14 @@ func GetArticle(id int64) Article {
 
 // SearchArticles searches in the database for articles that match
 // the passed query, and return article objects.
-func SearchArticles(query string) []Article {
-    stmt, err := db.Prepare("select id, title, text, created_at, user_id from article where title like \"%" + query + "%\" or text like \"%" + query + "%\"")
+func SearchArticles(page int, query string) []Article {
+    offset := (page - 1) * common.ArticlesPerPage
+    limit := common.ArticlesPerPage
+    like := "%" + query + "%"
+    stmt, err := db.Prepare("select id, title, text, created_at, user_id from article where title like ? or text like ? limit ? offset ?")
     pe(err)
     defer stmt.Close()
-    rows, err2 := stmt.Query()
+    rows, err2 := stmt.Query(like, like, limit, offset)
     pe(err2)
     defer rows.Close()
     return getArticlesFromRows(rows)

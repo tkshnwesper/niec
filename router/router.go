@@ -145,7 +145,7 @@ func Init() {
                 URL string
             }{
                 "Niec :: Search",
-                db.SearchArticles(query),
+                db.SearchArticles(page, query),
                 page,
                 pages,
                 common.Increment,
