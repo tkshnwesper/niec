@@ -52,10 +52,14 @@ func GetLatestArticles(page int) []Article {
 }
 
 // GetArticle returns the article with the specified id
-func GetArticle(id int64) Article {
+func GetArticle(loggedin bool, id int64) Article {
     var art Article
     var text string
-    err := db.QueryRow("select id, title, text, created_at, user_id from article where id = ?", id).Scan(
+    var mid = " "
+    if !loggedin {
+        mid = " public = true and "
+    }
+    err := db.QueryRow("select id, title, text, created_at, user_id from article where" + mid + "id = ?", id).Scan(
         &art.ID,
         &art.Title,
         &text,
