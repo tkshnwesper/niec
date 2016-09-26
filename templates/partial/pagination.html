@@ -6,13 +6,14 @@
         <li>
         {{ end }}
             {{ $url := .URL }}
-            <a href='{{ urlpath "landing" }}?{{ $url }}page={{ call .Decrement .Page }}' aria-label="Previous">
+            {{ $path := .Path }}
+            <a href='{{ urlpath $path }}?{{ html $url }}page={{ call .Decrement .Page }}' aria-label="Previous">
                 <span aria-hidden="true">&laquo;</span>
             </a>
         </li>
 
         {{ range $i, $el := .Pages }}
-        <li><a href='{{ urlpath "landing" }}?{{ $url }}page={{ $el }}'>{{ $el }}</a></li>
+        <li><a href='{{ urlpath $path }}?{{ html $url }}page={{ $el }}'>{{ $el }}</a></li>
         {{ end }}
         
         {{ $num := len .Pages }}
@@ -22,8 +23,8 @@
         <li class="disabled">
         {{ else }}
         <li>
-        {{ end }} 
-            <a href='{{ urlpath "landing" }}?{{ $url }}page={{ call .Increment .Page }}' aria-label="Next">
+        {{ end }}
+            <a href='{{ urlpath $path }}?{{ html $url }}page={{ call .Increment .Page }}' aria-label="Next">
                 <span aria-hidden="true">&raquo;</span>
             </a>
         </li>

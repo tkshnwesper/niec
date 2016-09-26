@@ -44,12 +44,14 @@ func initSubmitPages() {
                 Property Property
                 Fields []Field
                 Buttons []Button
+                Public bool
             } {
                 "Submit an Article",
                 "",
                 getProperty(c),
                 Fields,
                 buttons,
+                false,
             })
         }
     })("submit")
@@ -60,17 +62,23 @@ func initSubmitPages() {
         } else {
             text := c.FormValueString("text")
             title := c.FormValueString("title")
-            tags := c.FormValueString("tags")
+            // tags := c.FormValueString("tags")
             action := c.FormValueString("action")
+            privacy := c.FormValueString("privacy")
             if action == "preview" {
                 c.SetFlash("text", text)
                 c.RedirectTo("preview")
             } else if action == "submit" {
+                var pub = false
+                if privacy == "public" {
+                    pub = true
+                }
                 id, success := db.InsertArticle(
                     getUserID(c),
                     title,
-                    tags,
+                    // tags,
                     text,
+                    pub,
                 )
                 if !success {
                     c.EmitError(iris.StatusInternalServerError)
@@ -102,7 +110,7 @@ func initSubmitPages() {
                 c.EmitError(iris.StatusNotFound)
             } else {
                 if getUserID(c) == db.GetArticleUserID(id) {
-                    title, text := db.FetchForEdit(id)
+                    title, text, pub := db.FetchForEdit(id)
                     buttons := []Button {
                         {
                             "submit",
@@ -136,12 +144,14 @@ func initSubmitPages() {
                         Title, Textarea string
                         Fields []Field
                         Buttons []Button
+                        Public bool
                     }{
                         getProperty(c),
                         "Edit Article",
                         text,
                         Fields,
                         buttons,
+                        pub,
                     })
                 } else {
                     c.EmitError(iris.StatusForbidden)
@@ -157,11 +167,15 @@ func initSubmitPages() {
             id, err := c.ParamInt64("id")
             text := c.FormValueString("text")
             title := c.FormValueString("title")
+            var pub = false
+            if c.FormValueString("privacy") == "public" {
+                pub = true
+            }
             if !pe(err) {
                 c.EmitError(iris.StatusNotFound)
             } else {
                 if getUserID(c) == db.GetArticleUserID(id) {
-                    if db.EditArticle(id, title, text) {
+                    if db.EditArticle(id, title, text, pub) {
                         c.SetFlash("message", "Article updated successfully!")
                         c.RedirectTo("article", id)
                     } else {

@@ -8,10 +8,10 @@ import (
 )
 
 // InsertArticle inserts an article into the database
-func InsertArticle(uid int64, title, _, body string) (int64, bool) {
-    stmt, err := db.Prepare("insert into article(created_at, title, text, user_id) values(?, ?, ?, ?)")
+func InsertArticle(uid int64, title, body string, pub bool) (int64, bool) {
+    stmt, err := db.Prepare("insert into article(created_at, title, text, user_id, public) values(?, ?, ?, ?, ?)")
     a := pe(err)
-    res, err1 := stmt.Exec(getDatetime(), title, body, uid)
+    res, err1 := stmt.Exec(getDatetime(), title, body, uid, pub)
     b := pe(err1)
     id, _ := res.LastInsertId()
     return id, a && b
@@ -70,11 +70,15 @@ func GetArticle(id int64) Article {
 
 // SearchArticles searches in the database for articles that match
 // the passed query, and return article objects.
-func SearchArticles(page int, query string) []Article {
+func SearchArticles(loggedin bool, page int, query string) []Article {
+    var mid = " "   // space is intentional
+    if !loggedin {
+        mid = " public = true and "
+    }
     offset := (page - 1) * common.ArticlesPerPage
     limit := common.ArticlesPerPage
     like := "%" + query + "%"
-    stmt, err := db.Prepare("select id, title, text, created_at, user_id from article where title like ? or text like ? limit ? offset ?")
+    stmt, err := db.Prepare("select id, title, text, created_at, user_id from article where" + mid + "(title like ? or text like ?) limit ? offset ?")
     pe(err)
     defer stmt.Close()
     rows, err2 := stmt.Query(like, like, limit, offset)
@@ -92,16 +96,17 @@ func GetArticleUserID(id int64) int64 {
 }
 
 // FetchForEdit fetches the data required by the edit page
-func FetchForEdit(id int64) (string, string) {
+func FetchForEdit(id int64) (string, string, bool) {
     var title, text string
-    err := db.QueryRow("select title, text from article where id = ?", id).Scan(&title, &text)
+    var pub bool
+    err := db.QueryRow("select title, text, public from article where id = ?", id).Scan(&title, &text, &pub)
     pe(err)
-    return title, text
+    return title, text, pub
 }
 
 // EditArticle writes the edits back to the database
-func EditArticle(id int64, title, text string) bool {
-    _, err := db.Exec("update article set title = ?, text = ? where id = ?", title, text, id)
+func EditArticle(id int64, title, text string, pub bool) bool {
+    _, err := db.Exec("update article set title = ?, text = ?, public = ? where id = ?", title, text, pub, id)
     return pe(err)
 }
 

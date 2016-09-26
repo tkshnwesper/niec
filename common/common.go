@@ -156,7 +156,7 @@ func ValidPagination(formPage string, count0 int64, articlesPerPage int) (int, b
     }
     app, count := int64(articlesPerPage), count0
     numpages := count / app
-    if count % app != 0 {
+    if count % app != 0 || count == 0 {
         numpages++
     }
     return page, !Pe(err) || page < 1 || int64(page) > numpages

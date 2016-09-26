@@ -59,7 +59,7 @@ func Init() {
                     Pages []int
                     Increment func(int)(int)
                     Decrement func(int)(int)
-                    URL string
+                    Path, URL string
                 }{
                     "Niec :: Home",
                     getProperty(c),
@@ -68,6 +68,7 @@ func Init() {
                     pages,
                     common.Increment,
                     common.Decrement,
+                    "landing",
                     "",
                 })
             }
@@ -95,10 +96,12 @@ func Init() {
             art := db.GetArticle(id)
             c.Render("article.html", struct {
                 Title, Message string
+                Property Property
                 Article db.Article
             }{
                 art.Title,
                 msg,
+                getProperty(c),
                 art,
             })
         }
@@ -132,19 +135,22 @@ func Init() {
             
             c.Render("search.html", struct {
                 Title string
+                Property Property
                 Articles []db.Article
                 Page int
                 Pages []int
                 Increment func(int)(int)
                 Decrement func(int)(int)
-                URL string
+                Path, URL string
             }{
                 "Niec :: Search",
-                db.SearchArticles(page, query),
+                getProperty(c),
+                db.SearchArticles(isLoggedIn(c), page, query),
                 page,
                 pages,
                 common.Increment,
                 common.Decrement,
+                "search",
                 "query=" + query + "&",
             })
         }
