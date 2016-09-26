@@ -101,9 +101,11 @@ func initSignPages() {
         }
         c.Render("sign.up.next.html", struct{
             Title string
+            Property Property
             Fields []Field
         }{
             "Niec :: Sign Up - Next",
+            getProperty(c),
             Fields,
         })
     })("signup-next")
@@ -188,11 +190,13 @@ func renderSign(c *iris.Context, title, action string) {
     }
     c.Render("sign.html", struct{
         Title string
+        Property Property
         Action string
         Fields []Field
         CapID string
     }{
         title,
+        getProperty(c),
         action,
         Fields,
         capid,

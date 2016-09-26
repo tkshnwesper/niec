@@ -39,6 +39,8 @@ func Init() {
     
     initSubmitPages()
     
+    InitMarkdownPages()
+    
     iris.Get("/", func(c *iris.Context) {
         msg, _ := c.GetFlash("message")
         typ, _ := c.GetFlash("messageType")
@@ -73,25 +75,29 @@ func Init() {
         } else {
             c.Render("index.html", struct {
                 Title string
+                Property Property
                 Message string
                 MessageType string
             }{
                 "Welcome to Niec!",
+                getProperty(c),
                 msg,
                 typ,
             })
         }
     })("landing")
     
-    iris.Get("/learn-more", func(c *iris.Context) {
-        c.Render("markdown.html", struct {
-            Title string
-            Text template.HTML
-        } {
-            "Learn more",
-            template.HTML(common.GetMarkdown(common.ReadMD("learn.more.md"))),
-        })
-    })("learn-more")
+    // iris.Get("/learn-more", func(c *iris.Context) {
+    //     c.Render("markdown.html", struct {
+    //         Title string
+    //         Property Property
+    //         Text template.HTML
+    //     } {
+    //         "Learn more",
+    //         getPro
+    //         template.HTML(common.GetMarkdown(common.ReadMD("learn.more.md"))),
+    //     })
+    // })("learn-more")
     
     iris.Get("/article/:id", func(c *iris.Context) {
         id, err := c.ParamInt64("id")

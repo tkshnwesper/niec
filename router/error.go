@@ -20,10 +20,12 @@ func (ec ErrorContainer) Serve(c *iris.Context) {
 func buildErrorPage(c *iris.Context, err ErrorContainer) {
     c.Render("error.html", struct {
         Title string
+        Property Property
         ErrorTitle string
         ErrorMessage template.HTML
     } {
         fmt.Sprintf("Error: %v", err.Title),
+        getProperty(c),
         err.Title,
         template.HTML(err.Message),
     })
@@ -99,9 +101,6 @@ func initErrorPages() {
     }
     
     for s, ec := range errTypes {
-        iris.Handle("GET", fmt.Sprintf("/error/%v", s), ErrorContainer {
-            Title: ec.Title,
-            Message: ec.Message,
-        })(s)
+        iris.Handle("GET", fmt.Sprintf("/error/%v", s), ec)(s)
     }
 }

@@ -41,11 +41,13 @@ func initSubmitPages() {
             }
             c.Render("submit.html", struct {
                 Title, Textarea string
+                Property Property
                 Fields []Field
                 Buttons []Button
             } {
                 "Submit an Article",
                 "",
+                getProperty(c),
                 Fields,
                 buttons,
             })
