@@ -95,7 +95,7 @@ func Init() {
             msg, _ := c.GetFlash("message")
             art, ok := db.GetArticle(isLoggedIn(c), id)
             if !ok {
-                c.EmitError(iris.StatusNotFound)
+                c.EmitError(iris.StatusUnauthorized)
             } else {
                 c.Render("article.html", struct {
                     Title, Message string

@@ -67,8 +67,9 @@ func GetArticle(loggedin bool, id int64) (Article, bool) {
         &art.UserID,
     )
     art.Text = template.HTML(common.GetMarkdown(text))
-    if pe(err) {
+    if err != nil {
         return Article {}, false
+    }
     art.Username = GetUsernameFromID(art.UserID)
     return art, true
 }

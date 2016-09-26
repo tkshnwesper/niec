@@ -35,29 +35,29 @@ func initErrorPages() {
 
     iris.OnError(iris.StatusNotFound, func(c *iris.Context) {
         buildErrorPage(c, ErrorContainer {
-            "404",
+            string(iris.StatusNotFound),
             iris.StatusText(iris.StatusNotFound),
         })
     })
     
     iris.OnError(iris.StatusInternalServerError, func(c *iris.Context) {
         buildErrorPage(c, ErrorContainer {
-            "503",
-            "Our server encountered an internal server error.",
-        })
-    })
-    
-    iris.OnError(iris.StatusForbidden, func(c *iris.Context) {
-        buildErrorPage(c, ErrorContainer {
-            "403",
-            "Please sign in first.",
+            string(iris.StatusInternalServerError),
+            iris.StatusText(iris.StatusInternalServerError),
         })
     })
     
     iris.OnError(iris.StatusUnauthorized, func(c *iris.Context) {
         buildErrorPage(c, ErrorContainer {
-            "401",
-            "Please sign in first.",
+            string(iris.StatusUnauthorized),
+            iris.StatusText(iris.StatusUnauthorized),
+        })
+    })
+    
+    iris.OnError(iris.StatusForbidden, func(c *iris.Context) {
+        buildErrorPage(c, ErrorContainer {
+            string(iris.StatusForbidden),
+            iris.StatusText(iris.StatusForbidden),
         })
     })
     
