@@ -52,7 +52,7 @@ func GetLatestArticles(page int) []Article {
 }
 
 // GetArticle returns the article with the specified id
-func GetArticle(loggedin bool, id int64) Article {
+func GetArticle(loggedin bool, id int64) (Article, bool) {
     var art Article
     var text string
     var mid = " "
@@ -67,9 +67,10 @@ func GetArticle(loggedin bool, id int64) Article {
         &art.UserID,
     )
     art.Text = template.HTML(common.GetMarkdown(text))
-    pe(err)
+    if pe(err) {
+        return Article {}, false
     art.Username = GetUsernameFromID(art.UserID)
-    return art
+    return art, true
 }
 
 // SearchArticles searches in the database for articles that match

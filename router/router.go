@@ -93,17 +93,21 @@ func Init() {
             c.EmitError(iris.StatusNotFound)
         } else {
             msg, _ := c.GetFlash("message")
-            art := db.GetArticle(isLoggedIn(c), id)
-            c.Render("article.html", struct {
-                Title, Message string
-                Property Property
-                Article db.Article
-            }{
-                art.Title,
-                msg,
-                getProperty(c),
-                art,
-            })
+            art, ok := db.GetArticle(isLoggedIn(c), id)
+            if !ok {
+                c.EmitError(iris.StatusNotFound)
+            } else {
+                c.Render("article.html", struct {
+                    Title, Message string
+                    Property Property
+                    Article db.Article
+                }{
+                    art.Title,
+                    msg,
+                    getProperty(c),
+                    art,
+                })
+            }
         }
     })("article")
     
