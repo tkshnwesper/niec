@@ -17,6 +17,10 @@ func (ec ErrorContainer) Serve(c *iris.Context) {
     buildErrorPage(c, ec)
 }
 
+func getCode(code int) string {
+    return fmt.Sprintf("%v", code)
+}
+
 func buildErrorPage(c *iris.Context, err ErrorContainer) {
     c.Render("error.html", struct {
         Title string
@@ -35,28 +39,28 @@ func initErrorPages() {
 
     iris.OnError(iris.StatusNotFound, func(c *iris.Context) {
         buildErrorPage(c, ErrorContainer {
-            string(iris.StatusNotFound),
+            getCode(iris.StatusNotFound),
             iris.StatusText(iris.StatusNotFound),
         })
     })
     
     iris.OnError(iris.StatusInternalServerError, func(c *iris.Context) {
         buildErrorPage(c, ErrorContainer {
-            string(iris.StatusInternalServerError),
+            getCode(iris.StatusInternalServerError),
             iris.StatusText(iris.StatusInternalServerError),
         })
     })
     
     iris.OnError(iris.StatusUnauthorized, func(c *iris.Context) {
         buildErrorPage(c, ErrorContainer {
-            string(iris.StatusUnauthorized),
+            getCode(iris.StatusUnauthorized),
             iris.StatusText(iris.StatusUnauthorized),
         })
     })
     
     iris.OnError(iris.StatusForbidden, func(c *iris.Context) {
         buildErrorPage(c, ErrorContainer {
-            string(iris.StatusForbidden),
+            getCode(iris.StatusForbidden),
             iris.StatusText(iris.StatusForbidden),
         })
     })
