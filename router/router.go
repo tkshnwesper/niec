@@ -4,7 +4,6 @@ import (
     "github.com/kataras/iris"
     HTML "github.com/iris-contrib/template/html"
     "github.com/dchest/captcha"
-    "html/template"
     "niec/common"
     "niec/db"
 )
@@ -86,19 +85,7 @@ func Init() {
             })
         }
     })("landing")
-    
-    // iris.Get("/learn-more", func(c *iris.Context) {
-    //     c.Render("markdown.html", struct {
-    //         Title string
-    //         Property Property
-    //         Text template.HTML
-    //     } {
-    //         "Learn more",
-    //         getPro
-    //         template.HTML(common.GetMarkdown(common.ReadMD("learn.more.md"))),
-    //     })
-    // })("learn-more")
-    
+
     iris.Get("/article/:id", func(c *iris.Context) {
         id, err := c.ParamInt64("id")
         if err != nil {
