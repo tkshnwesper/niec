@@ -7,6 +7,10 @@
         <p>
             <strong>Join date: </strong>{{ $user.CreatedAt }}
         </p>
+        {{ $p := .Property }}
+        {{ if eq $p.UserID $user.ID }}
+        <a href='{{ urlpath "draft" $user.ID }}' class="btn btn-default btn-block">View Drafts</a>
+        {{ end }}
     </div>
     <div class="col-md-8 col-xs-12">
         {{ $user.Bio }}

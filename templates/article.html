@@ -1,12 +1,6 @@
 <div class="container">
-    {{ if .Message }}
-    <div class="row">
-        <div class="alert alert-success alert-dismissible" role="alert">
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <strong>{{ .Message }}</strong>
-        </div>
-    </div>
-    {{ end }}
+    {{ render "partial/message.html" }}
+    
     {{ $article := .Article }}
     <article>
         <h1><small>#{{ $article.ID }}</small> {{ $article.Title }}</h1>
@@ -15,7 +9,8 @@
             {{ $article.Text }}
         </div>
     </article>
-    {{ if .Property.LoggedIn }}
+    {{ $p := .Property }}
+    {{ if eq $article.UserID $p.UserID }}
     <div>
         <a href='{{ urlpath "edit-article" $article.ID }}' class="btn btn-default">Edit</a>
     </div>

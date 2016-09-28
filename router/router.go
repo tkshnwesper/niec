@@ -104,12 +104,13 @@ func Init() {
                 c.EmitError(iris.StatusNotFound)
             } else {
                 c.Render("article.html", struct {
-                    Title, Message string
+                    Title, Message, MessageType string
                     Property Property
                     Article db.Article
                 }{
                     art.Title,
                     msg,
+                    "success",
                     getProperty(c),
                     art,
                 })
@@ -122,16 +123,20 @@ func Init() {
         if err != nil {
             c.EmitError(iris.StatusNotFound)
         } else {
-            user := db.GetUser(id)
-            c.Render("user.html", struct {
-                Title string
-                Property Property
-                User db.User
-            }{
-                user.Username,
-                getProperty(c),
-                user,
-            })
+            user, ok := db.GetUser(id)
+            if !ok {
+                c.EmitError(iris.StatusNotFound)
+            } else {
+                c.Render("user.html", struct {
+                    Title string
+                    Property Property
+                    User db.User
+                }{
+                    user.Username,
+                    getProperty(c),
+                    user,
+                })
+            }
         }
     })("user")
     
@@ -144,16 +149,20 @@ func Init() {
         } else if id != getUserID(c) {
             c.EmitError(iris.StatusForbidden)
         } else {
-            user := db.GetUser(id)
-            c.Render("draft.html", struct {
-                Title string
-                Property Property
-                Articles []db.Article
-            }{
-                user.Username,
-                getProperty(c),
-                db.GetDraftList(getUserID(c)),
-            })
+            user, ok := db.GetUser(id)
+            if !ok {
+                c.EmitError(iris.StatusNotFound)
+            } else {
+                c.Render("draft.html", struct {
+                    Title string
+                    Property Property
+                    Articles []db.Article
+                }{
+                    user.Username,
+                    getProperty(c),
+                    db.GetDraftList(getUserID(c)),
+                })
+            }
         }
     })("draft")
     

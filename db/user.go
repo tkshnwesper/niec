@@ -78,7 +78,7 @@ func VerifyEmail(id int64, hash string) bool {
 }
 
 // GetUser returns a user object of the specified username
-func GetUser(id int64) User {
+func GetUser(id int64) (User, bool) {
     var text string
     var user User
     user.ID = id
@@ -89,9 +89,11 @@ func GetUser(id int64) User {
         &user.CreatedAt,
         &user.Website,
     )
-    pe(err)
+    if err != nil {
+        return User {}, false
+    }
     user.Bio = template.HTML(common.GetMarkdown(text))
-    return user
+    return user, true
 }
 
 // VerifyCreds verifies whether the email and password match

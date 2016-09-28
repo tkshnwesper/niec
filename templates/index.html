@@ -1,12 +1,5 @@
 <div class="container">
-    {{ if .Message }}
-    <div class="row">
-        <div class="alert alert-{{ .MessageType }} alert-dismissible" role="alert">
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <strong>{{ .Message }}</strong>
-        </div>
-    </div>
-    {{ end }}
+    {{ render "partial/message.html" }}
     <div class="jumbotron">
         <h1>Niec</h1>
         <p>

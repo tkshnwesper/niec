@@ -103,11 +103,7 @@ func initSubmitPages() {
                         msg = "Draft saved successfully!"
                     }
                     c.SetFlash("message", msg)
-                    if draft {
-                        c.RedirectTo("draft", getUserID(c))
-                    } else {
-                        c.RedirectTo("article", id)
-                    }
+                    c.RedirectTo("article", id)
                 }
             } else {
                 c.EmitError(iris.StatusNotFound)
@@ -215,7 +211,11 @@ func initSubmitPages() {
                 if action == "submit" {
                     if getUserID(c) == db.GetArticleUserID(id) {
                         if db.EditArticle(id, title, text, pub, draft) {
-                            c.SetFlash("message", "Article updated successfully!")
+                            msg := "Article updated successfully!"
+                            if draft {
+                                msg = "Draft updated successfully!"
+                            }
+                            c.SetFlash("message", msg)
                             c.RedirectTo("article", id)
                         } else {
                             c.EmitError(iris.StatusInternalServerError)
