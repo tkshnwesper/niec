@@ -38,6 +38,13 @@ go get -u
         "Name": "name_of_the_database",
         "User": "database_username",
         "Password": "database_password"
+    },
+    "SMTP": {
+        "Host": "host_address",
+        "Port": host_port_number,
+        "Username": "username",
+        "Password": "password",
+        "FromAlias": "from_alias"
     }
 }
 ```
