@@ -8,10 +8,10 @@ import (
 )
 
 // InsertArticle inserts an article into the database
-func InsertArticle(uid int64, title, body string, pub bool) (int64, bool) {
-    stmt, err := db.Prepare("insert into article(created_at, title, text, user_id, public) values(?, ?, ?, ?, ?)")
+func InsertArticle(uid int64, title, body string, pub, draft bool) (int64, bool) {
+    stmt, err := db.Prepare("insert into article(created_at, title, text, user_id, public, draft) values(?, ?, ?, ?, ?, ?)")
     a := pe(err)
-    res, err1 := stmt.Exec(getDatetime(), title, body, uid, pub)
+    res, err1 := stmt.Exec(getDatetime(), title, body, uid, pub, draft)
     b := pe(err1)
     id, _ := res.LastInsertId()
     return id, a && b
@@ -38,11 +38,17 @@ func getArticlesFromRows(rows *sql.Rows) []Article {
     return articles
 }
 
+
+///////////////////////////////////////////////////////////////////////////////////////////
+// Similar queries in GetLatestArticles and GetArticleCount
+///////////////////////////////////////////////////////////////////////////////////////////
+
 // GetLatestArticles returns a number of recent articles
-func GetLatestArticles(page int) []Article {
+func GetLatestArticles(page int) ([]Article) {
     offset := (page - 1) * common.ArticlesPerPage
     limit := common.ArticlesPerPage
-    stmt, err := db.Prepare("select id, title, text, created_at, user_id from article order by created_at desc limit ? offset ?")
+    prep := "select id, title, text, created_at, user_id from article where draft = false order by created_at desc limit ? offset ?"
+    stmt, err := db.Prepare(prep)
     pe(err)
     defer stmt.Close()
     rows, err2 := stmt.Query(limit, offset)
@@ -51,15 +57,27 @@ func GetLatestArticles(page int) []Article {
     return getArticlesFromRows(rows)
 }
 
+
+// GetArticleCount counts the total number of articles present in the article table
+func GetArticleCount() int64 {
+    var num int64
+    err := db.QueryRow("select count(*) from article where draft = false").Scan(&num)
+    pe(err)
+    return num
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////
+
 // GetArticle returns the article with the specified id
-func GetArticle(loggedin bool, id int64) (Article, bool) {
+func GetArticle(loggedin bool, uid, id int64) (Article, bool) {
     var art Article
     var text string
     var mid = " "
     if !loggedin {
         mid = " public = true and "
     }
-    err := db.QueryRow("select id, title, text, created_at, user_id from article where" + mid + "id = ?", id).Scan(
+    err := db.QueryRow("select id, title, text, created_at, user_id from article where ((draft = false) or (draft = true and user_id = ?)) and" + mid + "id = ?", uid, id).Scan(
         &art.ID,
         &art.Title,
         &text,
@@ -74,9 +92,14 @@ func GetArticle(loggedin bool, id int64) (Article, bool) {
     return art, true
 }
 
+
+///////////////////////////////////////////////////////////////////////////////////////////
+// Similar queries in SearchArticles and GetSearchCount
+///////////////////////////////////////////////////////////////////////////////////////////
+
 // SearchArticles searches in the database for articles that match
 // the passed query, and return article objects.
-func SearchArticles(loggedin bool, page int, query string) []Article {
+func SearchArticles(loggedin bool, page int, query string) ([]Article) {
     var mid = " "   // space is intentional
     if !loggedin {
         mid = " public = true and "
@@ -84,14 +107,33 @@ func SearchArticles(loggedin bool, page int, query string) []Article {
     offset := (page - 1) * common.ArticlesPerPage
     limit := common.ArticlesPerPage
     like := "%" + query + "%"
-    stmt, err := db.Prepare("select id, title, text, created_at, user_id from article where" + mid + "(title like ? or text like ?) limit ? offset ?")
+    stmt, err := db.Prepare("select id, title, text, created_at, user_id from article where draft = false and" + mid + "(title like ? or text like ?) order by created_at desc limit ? offset ?")
     pe(err)
     defer stmt.Close()
     rows, err2 := stmt.Query(like, like, limit, offset)
-    pe(err2)
+    pe(err2)    
     defer rows.Close()
     return getArticlesFromRows(rows)
 }
+
+// GetSearchCount returns the count of the number of search items
+func GetSearchCount(loggedin bool, query string) int64 {
+    var mid = " "   // space is intentional
+    var count int64
+    if !loggedin {
+        mid = " public = true and "
+    }
+    like := "%" + query + "%"
+    err3 := db.QueryRow(
+        "select count(*) from article where draft = false and" + mid + "(title like ? or text like ?)",
+        like, like,
+    ).Scan(&count)
+    pe(err3)
+    return count
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////
 
 // GetArticleUserID returns the user ID of the creator of that article
 func GetArticleUserID(id int64) int64 {
@@ -102,24 +144,23 @@ func GetArticleUserID(id int64) int64 {
 }
 
 // FetchForEdit fetches the data required by the edit page
-func FetchForEdit(id int64) (string, string, bool) {
+func FetchForEdit(id int64) (string, string, bool, bool) {
     var title, text string
-    var pub bool
-    err := db.QueryRow("select title, text, public from article where id = ?", id).Scan(&title, &text, &pub)
+    var pub, draft bool
+    err := db.QueryRow("select title, text, public, draft from article where id = ?", id).Scan(&title, &text, &pub, &draft)
     pe(err)
-    return title, text, pub
+    return title, text, pub, draft
 }
 
 // EditArticle writes the edits back to the database
-func EditArticle(id int64, title, text string, pub bool) bool {
-    _, err := db.Exec("update article set title = ?, text = ?, public = ? where id = ?", title, text, pub, id)
+func EditArticle(id int64, title, text string, pub, draft bool) bool {
+    _, err := db.Exec("update article set title = ?, text = ?, public = ?, draft = ? where id = ?", title, text, pub, draft, id)
     return pe(err)
 }
 
-// GetArticleCount counts the total number of articles present in the article table
-func GetArticleCount() int64 {
-    var num int64
-    err := db.QueryRow("select count(*) from article where 1").Scan(&num)
+// GetDraftList returns a list of drafts for a user
+func GetDraftList(uid int64) []Article {
+    rows, err := db.Query("select id, title, text, created_at, user_id from article where draft = true and user_id = ? order by created_at desc", uid)
     pe(err)
-    return num
+    return getArticlesFromRows(rows)
 }

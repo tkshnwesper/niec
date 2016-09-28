@@ -8,7 +8,7 @@ import (
 
 // Markdown is a container for markdown files
 type Markdown struct {
-    FileName string
+    Path, FileName, Title string
     LoggedIn bool
 }
 
@@ -24,9 +24,9 @@ func (m Markdown) Serve(c *iris.Context) {
             Property Property
             Text template.HTML
         } {
-            "Learn more",
+            m.Title,
             getProperty(c),
-            template.HTML(common.GetMarkdown(common.ReadMD("learn.more.md"))),
+            template.HTML(common.GetMarkdown(common.ReadMD(m.Path + m.FileName))),
         })
     } else {
         c.EmitError(iris.StatusUnauthorized)
@@ -37,11 +37,13 @@ func (m Markdown) Serve(c *iris.Context) {
 func InitMarkdownPages() {
     pages := map[string]Markdown {
         "learn-more": Markdown {
-            "learn-more.html",
+            "",
+            "learn.more.md",
+            "Learn More",
             false,
         },
     }
     for s, mk := range pages {
-        iris.Handle("GET", "/" + s, mk)(s)
+        iris.Handle("GET", "/" + mk.Path + s, mk)(s)
     }
 }

@@ -1,0 +1,3 @@
+{{ range $btn := .Buttons }}
+<button class="btn btn-default" name="action" type="{{ $btn.Type }}" value="{{ $btn.Name }}">{{ $btn.Placeholder }}</button>
+{{ end }}

@@ -1,0 +1,6 @@
+{{ range $field := .Fields }}
+<div class="form-group">
+    <label class="sr-only" for="{{ $field.Name }}">{{ $field.Placeholder }}</label>
+    <input id="{{ $field.Name }}" type="{{ $field.Type }}" class="form-control bg-primary" placeholder="{{ $field.Placeholder }}" name="{{ $field.Name }}" value="{{ $field.Value }}" maxlength="{{ $field.MaxSize }}">
+</div>
+{{ end }}

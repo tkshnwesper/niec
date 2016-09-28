@@ -24,6 +24,12 @@ type Field struct {
     Value string
 }
 
+// Checkbox holds information about checkboxes
+type Checkbox struct {
+    Title, Name, Value, Tooltip, Glyph string
+    Checked bool
+}
+
 // Init helps to initialize all the pages required in the site
 func Init() {
     iris.UseTemplate(HTML.New(HTML.Config {
@@ -93,9 +99,9 @@ func Init() {
             c.EmitError(iris.StatusNotFound)
         } else {
             msg, _ := c.GetFlash("message")
-            art, ok := db.GetArticle(isLoggedIn(c), id)
+            art, ok := db.GetArticle(isLoggedIn(c), getUserID(c), id)
             if !ok {
-                c.EmitError(iris.StatusUnauthorized)
+                c.EmitError(iris.StatusNotFound)
             } else {
                 c.Render("article.html", struct {
                     Title, Message string
@@ -119,18 +125,42 @@ func Init() {
             user := db.GetUser(id)
             c.Render("user.html", struct {
                 Title string
+                Property Property
                 User db.User
             }{
                 user.Username,
+                getProperty(c),
                 user,
             })
         }
     })("user")
     
+    iris.Get("/user/:id/draft", func(c *iris.Context) {
+       id, err := c.ParamInt64("id")
+        if err != nil {
+            c.EmitError(iris.StatusNotFound)
+        } else if !isLoggedIn(c) {
+            c.EmitError(iris.StatusUnauthorized);
+        } else if id != getUserID(c) {
+            c.EmitError(iris.StatusForbidden)
+        } else {
+            user := db.GetUser(id)
+            c.Render("draft.html", struct {
+                Title string
+                Property Property
+                Articles []db.Article
+            }{
+                user.Username,
+                getProperty(c),
+                db.GetDraftList(getUserID(c)),
+            })
+        }
+    })("draft")
+    
     iris.Get("/search", func(c *iris.Context) {
         formPage := c.FormValueString("page")
         query := c.FormValueString("query")
-        count := db.GetArticleCount()
+        count := db.GetSearchCount(isLoggedIn(c), query)
         page, b := common.ValidPagination(formPage, count, common.ArticlesPerPage)
         if b {
             c.RedirectTo("search")

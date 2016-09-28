@@ -10,7 +10,7 @@ import (
 func initSubmitPages() {
     iris.Get("/submit", func(c *iris.Context) {
         if !isLoggedIn(c) {
-            c.EmitError(iris.StatusForbidden)
+            c.EmitError(iris.StatusUnauthorized)
         } else {
             buttons := []Button {
                 {
@@ -39,19 +39,29 @@ func initSubmitPages() {
                 //     255,
                 // },
             }
+            cb := []Checkbox {
+                {
+                    "Public", "privacy", "public",
+                    "Can be viewed without logging in", "globe", false,
+                },
+                {
+                    "Draft", "draft", "draft",
+                    "Drafts are visible only to you", "blackboard", false,
+                },
+            } 
             c.Render("submit.html", struct {
                 Title, Textarea string
                 Property Property
                 Fields []Field
                 Buttons []Button
-                Public bool
+                Checkboxes []Checkbox
             } {
                 "Submit an Article",
                 "",
                 getProperty(c),
                 Fields,
                 buttons,
-                false,
+                cb,
             })
         }
     })("submit")
@@ -65,6 +75,10 @@ func initSubmitPages() {
             // tags := c.FormValueString("tags")
             action := c.FormValueString("action")
             privacy := c.FormValueString("privacy")
+            var draft = false
+            if c.FormValueString("draft") == "draft" {
+                draft = true
+            }
             if action == "preview" {
                 c.SetFlash("text", text)
                 c.RedirectTo("preview")
@@ -79,12 +93,21 @@ func initSubmitPages() {
                     // tags,
                     text,
                     pub,
+                    draft,
                 )
                 if !success {
                     c.EmitError(iris.StatusInternalServerError)
                 } else {
-                    c.SetFlash("message", "Article submitted successfully!")
-                    c.RedirectTo("article", id)
+                    msg := "Article submitted successfully!"
+                    if draft {
+                        msg = "Draft saved successfully!"
+                    }
+                    c.SetFlash("message", msg)
+                    if draft {
+                        c.RedirectTo("draft", getUserID(c))
+                    } else {
+                        c.RedirectTo("article", id)
+                    }
                 }
             } else {
                 c.EmitError(iris.StatusNotFound)
@@ -110,7 +133,7 @@ func initSubmitPages() {
                 c.EmitError(iris.StatusNotFound)
             } else {
                 if getUserID(c) == db.GetArticleUserID(id) {
-                    title, text, pub := db.FetchForEdit(id)
+                    title, text, pub, draft := db.FetchForEdit(id)
                     buttons := []Button {
                         {
                             "submit",
@@ -138,20 +161,30 @@ func initSubmitPages() {
                         //     255,
                         // },
                     }
+                    cb := []Checkbox {
+                        {
+                            "Public", "privacy", "public",
+                            "Can be viewed without logging in", "globe", pub,
+                        },
+                        {
+                            "Draft", "draft", "draft",
+                            "Drafts are visible only to you", "blackboard", draft,
+                        },
+                    }
                     c.Render("submit.html", struct {
                         // Do not make Textarea into a template.HTML
                         Property Property
                         Title, Textarea string
                         Fields []Field
                         Buttons []Button
-                        Public bool
+                        Checkboxes []Checkbox
                     }{
                         getProperty(c),
                         "Edit Article",
                         text,
                         Fields,
                         buttons,
-                        pub,
+                        cb,
                     })
                 } else {
                     c.EmitError(iris.StatusForbidden)
@@ -167,6 +200,11 @@ func initSubmitPages() {
             id, err := c.ParamInt64("id")
             text := c.FormValueString("text")
             title := c.FormValueString("title")
+            action := c.FormValueString("action")
+            var draft = false
+            if c.FormValueString("draft") == "draft" {
+                draft = true
+            }
             var pub = false
             if c.FormValueString("privacy") == "public" {
                 pub = true
@@ -174,15 +212,22 @@ func initSubmitPages() {
             if !pe(err) {
                 c.EmitError(iris.StatusNotFound)
             } else {
-                if getUserID(c) == db.GetArticleUserID(id) {
-                    if db.EditArticle(id, title, text, pub) {
-                        c.SetFlash("message", "Article updated successfully!")
-                        c.RedirectTo("article", id)
+                if action == "submit" {
+                    if getUserID(c) == db.GetArticleUserID(id) {
+                        if db.EditArticle(id, title, text, pub, draft) {
+                            c.SetFlash("message", "Article updated successfully!")
+                            c.RedirectTo("article", id)
+                        } else {
+                            c.EmitError(iris.StatusInternalServerError)
+                        }
                     } else {
-                        c.EmitError(iris.StatusInternalServerError)
+                        c.EmitError(iris.StatusForbidden)
                     }
+                } else if action == "preview" {
+                    c.SetFlash("text", text)
+                    c.RedirectTo("preview")
                 } else {
-                    c.EmitError(iris.StatusForbidden)
+                    c.EmitError(iris.StatusNotFound)
                 }
             }
         } else {

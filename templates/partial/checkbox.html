@@ -1,0 +1,7 @@
+{{ range $cb := .Checkboxes }}
+<label class="checkbox-inline">
+    <input type="checkbox" name="{{ $cb.Name }}" value="{{ $cb.Value }}" {{ if $cb.Checked }}checked{{ end }}>
+    <span class="glyphicon glyphicon-{{ $cb.Glyph }}" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="{{ $cb.Tooltip }}"></span>
+    <span>{{ $cb.Title }}</span>
+</label>
+{{ end }}
