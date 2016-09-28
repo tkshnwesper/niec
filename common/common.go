@@ -21,7 +21,7 @@ import (
 const PaginationWindow = 5
 
 // ArticlesPerPage is the number of articles that are displayed per page.
-const ArticlesPerPage = 10
+const ArticlesPerPage = 1
 
 // ConfigObject will be used by modules that require the config
 var ConfigObject Config
@@ -159,7 +159,7 @@ func ValidPagination(formPage string, count0 int64, articlesPerPage int) (int, b
     if count % app != 0 || count == 0 {
         numpages++
     }
-    return page, !Pe(err) || page < 1 || int64(page) > numpages
+    return page, !(!Pe(err) || page < 1 || int64(page) > numpages)
 }
 
 // Increment adds one

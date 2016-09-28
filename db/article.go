@@ -158,9 +158,29 @@ func EditArticle(id int64, title, text string, pub, draft bool) bool {
     return pe(err)
 }
 
+///////////////////////////////////////////////////////////////////////////////////////////
+// Similar queries in GetDraftList and GetDraftCount
+///////////////////////////////////////////////////////////////////////////////////////////
+
 // GetDraftList returns a list of drafts for a user
-func GetDraftList(uid int64) []Article {
-    rows, err := db.Query("select id, title, text, created_at, user_id from article where draft = true and user_id = ? order by created_at desc", uid)
+func GetDraftList(uid int64, page int) []Article {
+    offset := (page - 1) * common.ArticlesPerPage
+    limit := common.ArticlesPerPage
+    rows, err := db.Query(
+        "select id, title, text, created_at, user_id from article where draft = true and user_id = ? order by created_at desc limit ? offset ?",
+        uid, limit, offset,
+    )
     pe(err)
     return getArticlesFromRows(rows)
 }
+
+// GetDraftCount returns the number of articles saved as draft for a particular user
+func GetDraftCount(uid int64) int64 {
+    var count int64
+    err := db.QueryRow("select count(*) from article where draft = true and user_id = ?", uid).Scan(&count)
+    pe(err)
+    return count
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////

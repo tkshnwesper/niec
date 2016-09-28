@@ -53,7 +53,7 @@ func Init() {
             formPage := c.FormValueString("page")
             count := db.GetArticleCount()
             page, b := common.ValidPagination(formPage, count, common.ArticlesPerPage)
-            if b {
+            if !b {
                 c.RedirectTo("landing")
             } else {
                 pages := common.Pagination(page, common.PaginationWindow, common.ArticlesPerPage, count)
@@ -149,18 +149,32 @@ func Init() {
         } else if id != getUserID(c) {
             c.EmitError(iris.StatusForbidden)
         } else {
-            user, ok := db.GetUser(id)
-            if !ok {
-                c.EmitError(iris.StatusNotFound)
+            count := db.GetDraftCount(id)
+            formPage := c.FormValueString("page")
+            page, b := common.ValidPagination(formPage, count, common.ArticlesPerPage)
+            if !b {
+                c.RedirectTo("draft", id)
             } else {
+                pages := common.Pagination(page, common.PaginationWindow, common.ArticlesPerPage, count)
                 c.Render("draft.html", struct {
                     Title string
                     Property Property
                     Articles []db.Article
+                    Page int
+                    Pages []int
+                    Increment func(int)(int)
+                    Decrement func(int)(int)
+                    Path, URL string
                 }{
-                    user.Username,
+                    getUsername(c),
                     getProperty(c),
-                    db.GetDraftList(getUserID(c)),
+                    db.GetDraftList(getUserID(c), page),
+                    page,
+                    pages,
+                    common.Increment,
+                    common.Decrement,
+                    iris.URL("draft", id),
+                    "",
                 })
             }
         }
@@ -171,11 +185,10 @@ func Init() {
         query := c.FormValueString("query")
         count := db.GetSearchCount(isLoggedIn(c), query)
         page, b := common.ValidPagination(formPage, count, common.ArticlesPerPage)
-        if b {
+        if !b {
             c.RedirectTo("search")
         } else {
             pages := common.Pagination(page, common.PaginationWindow, common.ArticlesPerPage, count)
-            
             c.Render("search.html", struct {
                 Title string
                 Property Property
