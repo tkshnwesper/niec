@@ -21,7 +21,7 @@ import (
 const PaginationWindow = 5
 
 // ArticlesPerPage is the number of articles that are displayed per page.
-const ArticlesPerPage = 1
+const ArticlesPerPage = 10
 
 // ConfigObject will be used by modules that require the config
 var ConfigObject Config

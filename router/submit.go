@@ -112,14 +112,20 @@ func initSubmitPages() {
     })
     
     iris.Get("/preview", func(c *iris.Context) {
-        body, _ := c.GetFlash("text")
-        c.Render("preview.html", struct {
-            Title string
-            Text template.HTML
-        } {
-            "Preview",
-            template.HTML(common.GetMarkdown(body)),
-        })
+        body, err := c.GetFlash("text")
+        if err != nil {
+            c.EmitError(iris.StatusNoContent)
+        } else {
+            c.Render("preview.html", struct {
+                Title string
+                Property Property
+                Text template.HTML
+            } {
+                "Preview",
+                getProperty(c),
+                template.HTML(common.GetMarkdown(body)),
+            })
+        }
     })("preview")
     
     iris.Get("/article/:id/edit", func(c *iris.Context) {

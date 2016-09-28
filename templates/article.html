@@ -9,10 +9,14 @@
             {{ $article.Text }}
         </div>
     </article>
-    {{ $p := .Property }}
-    {{ if eq $article.UserID $p.UserID }}
+    
     <div>
+        {{ $p := .Property }}
+        {{ if eq $article.UserID $p.UserID }}
         <a href='{{ urlpath "edit-article" $article.ID }}' class="btn btn-default">Edit</a>
+        {{ end }}
+        
+        <a href='{{ urlpath "raw-article" $article.ID }}' class="btn btn-default">View Raw</a>
     </div>
-    {{ end }}
+    
 </div>

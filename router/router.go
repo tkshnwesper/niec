@@ -118,6 +118,20 @@ func Init() {
         }
     })("article")
     
+    iris.Get("/article/:id/raw", func(c *iris.Context) {
+        id, err := c.ParamInt64("id")
+        if err != nil {
+            c.EmitError(iris.StatusNotFound)
+        } else {
+            text, ok := db.GetRaw(isLoggedIn(c), getUserID(c), id)
+            if !ok {
+                c.EmitError(iris.StatusNotFound)
+            } else {
+                c.Text(iris.StatusOK, text)
+            }
+        }
+    })("raw-article")
+    
     iris.Get("/user/:id", func(c *iris.Context) {
        id, err := c.ParamInt64("id")
         if err != nil {

@@ -65,6 +65,13 @@ func initErrorPages() {
         })
     })
     
+    iris.OnError(iris.StatusNoContent, func(c *iris.Context) {
+        buildErrorPage(c, ErrorContainer {
+            getCode(iris.StatusNoContent),
+            iris.StatusText(iris.StatusNoContent),
+        })
+    })
+    
     errTypes := map[string]ErrorContainer {
         "blank-field": ErrorContainer {
             "Blank Field(s)",
