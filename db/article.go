@@ -31,6 +31,7 @@ func getArticlesFromRows(rows *sql.Rows) []Article {
             &art.CreatedAt,
             &art.UserID,
         )
+        art.CreatedAt = common.FormatTime(art.CreatedAt)
         art.Text = template.HTML(common.GetMarkdown(text))
         art.Username = GetUsernameFromID(art.UserID)
         articles = append(articles, art)
@@ -90,6 +91,7 @@ func GetArticle(loggedin bool, uid, id int64) (Article, bool) {
         &art.CreatedAt,
         &art.UserID,
     )
+    art.CreatedAt = common.FormatTime(art.CreatedAt)
     art.Text = template.HTML(common.GetMarkdown(text))
     if err != nil {
         return Article {}, false

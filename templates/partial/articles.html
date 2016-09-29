@@ -1,4 +1,4 @@
-{{ $article := .Article }}
+{{ range $article := .Articles }}
 <article>
     <h1><a href='{{ urlpath "article" $article.ID }}'><small>#{{ $article.ID }}</small> {{ $article.Title }}</a></h1>
     <h4>by <a href='{{ urlpath "user" $article.UserID }}'>{{ $article.Username }}</a></h4>
@@ -7,3 +7,4 @@
         {{ $article.Text }}
     </div>
 </article>
+{{ end }}

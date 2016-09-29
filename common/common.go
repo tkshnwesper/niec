@@ -171,3 +171,12 @@ func Increment(num int) int {
 func Decrement(num int) int {
     return num - 1
 }
+
+// FormatTime returns a formatted string of datetime
+func FormatTime(t string) string {
+    pt, err := time.Parse("2006-01-02 15:04:05", t)
+    if Pe(err) {
+        return pt.Format("Monday, _2 January 2006 15:04:05")
+    }
+    return ""
+}

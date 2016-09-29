@@ -9,7 +9,7 @@ import (
 
 func initSubmitPages() {
     iris.Get("/submit", func(c *iris.Context) {
-        if isLoggedIn(c) {
+        if !isLoggedIn(c) {
             c.EmitError(iris.StatusUnauthorized)
         } else {
             buttons := []Button {
