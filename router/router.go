@@ -65,7 +65,7 @@ func Init() {
                     Pages []int
                     Increment func(int)(int)
                     Decrement func(int)(int)
-                    Path, URL string
+                    Path, URL, Message, MessageType string
                 }{
                     "Niec :: Home",
                     getProperty(c),
@@ -76,6 +76,8 @@ func Init() {
                     common.Decrement,
                     "landing",
                     "",
+                    msg,
+                    typ,
                 })
             }
         } else {

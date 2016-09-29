@@ -210,3 +210,12 @@ func GetDraftCount(uid int64) int64 {
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////
+
+// DeleteArticle deletes an article from the article table
+func DeleteArticle(id int64) bool {
+    _, err := db.Exec("delete from article where id = ?", id)
+    if err != nil {
+        return false
+    }
+    return true
+}

@@ -9,7 +9,7 @@ import (
 
 func initSubmitPages() {
     iris.Get("/submit", func(c *iris.Context) {
-        if !isLoggedIn(c) {
+        if isLoggedIn(c) {
             c.EmitError(iris.StatusUnauthorized)
         } else {
             buttons := []Button {
@@ -173,7 +173,7 @@ func initSubmitPages() {
                             "Drafts are visible only to you", "blackboard", draft,
                         },
                     }
-                    c.Render("submit.html", struct {
+                    c.Render("edit.html", struct {
                         // Do not make Textarea into a template.HTML
                         Property Property
                         Title, Textarea string
@@ -232,6 +232,14 @@ func initSubmitPages() {
                 } else if action == "preview" {
                     c.SetFlash("text", text)
                     c.RedirectTo("preview")
+                } else if action == "delete" {
+                    if !db.DeleteArticle(id) {
+                        c.EmitError(iris.StatusInternalServerError)
+                    } else {
+                        c.SetFlash("message", "Successfully deleted article!")
+                        c.SetFlash("messageType", "success")
+                        c.RedirectTo("landing")
+                    }
                 } else {
                     c.EmitError(iris.StatusNotFound)
                 }
