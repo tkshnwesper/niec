@@ -2,7 +2,9 @@
     <div class="page-header">
         <h1>Drafts</h1>
     </div>
+    {{ if .Articles }}
     {{ render "partial/articles.html" }}
     
     {{ render "partial/pagination.html" }}
+    {{ end }}
 </div>

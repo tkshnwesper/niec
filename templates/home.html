@@ -1,8 +1,9 @@
 <div class="container">
     {{ render "partial/message.html" }}
     
+    {{ if .Articles }}
     {{ render "partial/articles.html" }}
     
     {{ render "partial/pagination.html" }}
-            
+    {{ end }}
 </div>
