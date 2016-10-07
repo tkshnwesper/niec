@@ -15,7 +15,11 @@ type Property struct {
 
 func initSignPages() {
     iris.Get("/sign/up", func(c *iris.Context) {
-        renderSign(c, "Niec :: Sign Up", "Sign Up")
+        if !isLoggedIn(c) {
+            renderSign(c, "Niec :: Sign Up", "Sign Up")
+        } else {
+            c.RedirectTo("landing")
+        }
     })("signup")
     
     iris.Post("/sign/up", func(c *iris.Context) {
@@ -37,7 +41,11 @@ func initSignPages() {
     })
     
     iris.Get("/sign/in", func(c *iris.Context) {
-        renderSign(c, "Niec :: Sign In", "Sign In")
+        if !isLoggedIn(c) {
+            renderSign(c, "Niec :: Sign In", "Sign In")
+        } else {
+            c.RedirectTo("landing")
+        }
     })("signin")
     
     iris.Post("/sign/in", func(c *iris.Context) {

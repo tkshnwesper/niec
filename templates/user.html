@@ -11,6 +11,7 @@
         {{ if eq $p.UserID $user.ID }}
         <a href='{{ urlpath "draft" $user.ID }}' class="btn btn-default btn-block">View Drafts</a>
         {{ end }}
+        <a href='{{ urlpath "user-article" $user.ID }}' class="btn btn-default btn-block">View Articles</a>
     </div>
     <div class="col-md-8 col-xs-12">
         {{ $user.Bio }}

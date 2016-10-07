@@ -45,6 +45,8 @@
                         <ul class="nav navbar-nav">
                             {{ if $p.LoggedIn }}
                             <li><a href='{{ urlpath "submit" }}'>Write</a></li>
+                            {{ else }}
+                            <li><a href='{{ urlpath "learn-more" }}'>About</a></li>
                             {{ end }}
                         </ul>
                         <ul class="nav navbar-nav navbar-right">
@@ -59,6 +61,9 @@
                                     <li><a href='{{ urlpath "logout" }}'>Logout</a></li>
                                 </ul>
                             </li>
+                            {{ else }}
+                            <li><a href='{{ urlpath "signin" }}'>Login</a></li>
+                            <li><a href='{{ urlpath "signup" }}'>Sign Up</a></li>
                             {{ end }}
                         </ul>
                     </div>
