@@ -221,3 +221,36 @@ func DeleteArticle(id int64) bool {
     }
     return true
 }
+
+///////////////////////////////////////////////////////////////////////////////////////////
+// Similar queries in GetUserArticleCount and GetUserArticles
+///////////////////////////////////////////////////////////////////////////////////////////
+
+// GetUserArticleCount gets the count of number of articles written by the user
+func GetUserArticleCount(id int64, loggedIn bool) int64 {
+    var mid = " "   // space is intentional
+    if !loggedIn {
+        mid = " public = true and "
+    }
+    var count int64
+    err := db.QueryRow("select count(*) from article where draft = false and" + mid + "user_id = ?", id).Scan(&count)
+    if err != nil {
+        return 0
+    }
+    return count
+}
+
+// GetUserArticles returns the articles written by the user
+func GetUserArticles(id int64, loggedIn bool, page int) []Article {
+    var mid = " "   // space is intentional
+    if !loggedIn {
+        mid = " public = true and "
+    }
+    offset := (page - 1) * common.ArticlesPerPage
+    limit := common.ArticlesPerPage
+    rows, _ := db.Query("select id, title, text, created_at, user_id from article where draft = false and" + mid + "user_id = ? order by created_at desc limit ? offset ?", id, limit, offset)
+    return getArticlesFromRows(rows)
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////

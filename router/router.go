@@ -156,6 +156,42 @@ func Init() {
         }
     })("user")
     
+    iris.Get("/user/:id/article", func(c *iris.Context) {
+        id, err := c.ParamInt64("id")
+        if err != nil {
+            c.EmitError(iris.StatusNotFound)
+        } else {
+            formPage := c.FormValueString("page")
+            count := db.GetUserArticleCount(id, isLoggedIn(c))
+            page, b := common.ValidPagination(formPage, count, common.ArticlesPerPage)
+            if !b {
+                c.RedirectTo("user-article", id)
+            } else {
+                pages := common.Pagination(page, common.PaginationWindow, common.ArticlesPerPage, count)
+                c.Render("user.article.html", struct {
+                    Title string
+                    Property Property
+                    Articles []db.Article
+                    Page int
+                    Pages []int
+                    Increment func(int)(int)
+                    Decrement func(int)(int)
+                    Path, URL string
+                }{
+                    db.GetUsernameFromID(id) + "'s Articles",
+                    getProperty(c),
+                    db.GetUserArticles(id, isLoggedIn(c), page),
+                    page,
+                    pages,
+                    common.Increment,
+                    common.Decrement,
+                    iris.URL("user-article", id),
+                    "",
+                })
+            }
+        }
+    })("user-article")
+    
     iris.Get("/user/:id/draft", func(c *iris.Context) {
        id, err := c.ParamInt64("id")
         if err != nil {
