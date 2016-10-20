@@ -1,15 +1,19 @@
 <div class="container">
+    {{ render "partial/message.html" }}
     {{ $user := .User }}
     <div class="col-md-4 col-xs-12">
         <img src="{{ $user.DP }}" class="img-responsive center-block">
-        <h1>{{ $user.Username }}</h1>
-        <h3><a href="{{ $user.Website }}">{{ $user.Website }}</a></h3>
-        <p>
-            <strong>Join date: </strong>{{ $user.CreatedAt }}
-        </p>
+        <div class="text-center">
+            <h1>{{ $user.Username }}</h1>
+            <h3><a href="{{ $user.Website }}">{{ $user.Website }}</a></h3>
+            <p>
+                <strong>Join date: </strong>{{ $user.CreatedAt }}
+            </p>
+        </div>
         {{ $p := .Property }}
         {{ if eq $p.UserID $user.ID }}
         <a href='{{ urlpath "draft" $user.ID }}' class="btn btn-default btn-block">View Drafts</a>
+        <a href='{{ urlpath "edit-profile" $user.ID }}' class="btn btn-default btn-block">Edit Profile</a>
         {{ end }}
         <a href='{{ urlpath "user-article" $user.ID }}' class="btn btn-default btn-block">View Articles</a>
     </div>

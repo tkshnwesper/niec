@@ -1,11 +1,11 @@
 <div class="container">
     {{ render "partial/message.html" }}
     
-    {{ $article := .Article }}
-    {{ render "partial/article.html" }}
+    {{ render "partial/articles.html" }}
     
     <div>
         {{ $p := .Property }}
+        {{ $article := index .Articles 0 }}
         {{ if eq $article.UserID $p.UserID }}
         <a href='{{ urlpath "edit-article" $article.ID }}' class="btn btn-default">Edit</a>
         {{ end }}

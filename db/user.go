@@ -38,12 +38,13 @@ func InsertUser(
     dp string,
     bio string,
     website string,
+    public bool,
 ) bool {
     hashedPassword := fmt.Sprintf("%x", md5.Sum([]byte(password)))
-    stmt, err := db.Prepare("insert into user(email, password, username, dp, bio, created_at, website, verified, verifyhash) values(?, ?, ?, ?, ?, ?, ?, ?, ?)")
+    stmt, err := db.Prepare("insert into user(email, password, username, dp, bio, created_at, website, verified, verifyhash, public) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
     a := pe(err)
     hash := common.GenerateRandomString(username + email)
-    res, err1 := stmt.Exec(email, hashedPassword, username, dp, bio, getDatetime(), website, false, hash)
+    res, err1 := stmt.Exec(email, hashedPassword, username, dp, bio, getDatetime(), website, false, hash, public)
     b := pe(err1)
     id, _ := res.LastInsertId()
     var buf bytes.Buffer
@@ -125,4 +126,22 @@ func GetUsernameAndID(email string) (string, int64) {
     err := db.QueryRow("select username, id from user where email = ?", email).Scan(&un, &id)
     pe(err)
     return un, id
+}
+
+// FetchForEditProfile returns fields that can be changed in the edit profile page
+func FetchForEditProfile(id int64) (string, string, string, bool) {
+    var dp, website, bio string
+    var public bool
+    err := db.QueryRow("select dp, website, bio, public from user where id = ?", id).Scan(
+        &dp, &website, &bio, &public,
+    )
+    if err != nil {}
+    return dp, website, bio, public
+}
+
+// EditProfile commits changes to the profile
+func EditProfile(id int64, dp, website, bio string, public bool) bool {
+    stmt, _ := db.Prepare("update user set dp = ?, website = ?, bio = ?, public = ? where id = ?")
+    _, err := stmt.Exec(dp, website, bio, public, id)
+    return pe(err)
 }

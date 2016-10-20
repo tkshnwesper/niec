@@ -1,9 +1,0 @@
-{{ $article := .Article }}
-<article>
-    <h1><a href='{{ urlpath "article" $article.ID }}'><small>#{{ $article.ID }}</small> {{ $article.Title }}</a></h1>
-    <h4>by <a href='{{ urlpath "user" $article.UserID }}'>{{ $article.Username }}</a></h4>
-    <h5>on {{ $article.CreatedAt }}</h5>
-    <div class="text">
-        {{ $article.Text }}
-    </div>
-</article>

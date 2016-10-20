@@ -22,6 +22,7 @@ type Field struct {
     Placeholder string
     MaxSize int
     Value string
+    SROnly bool
 }
 
 // Checkbox holds information about checkboxes
@@ -45,6 +46,10 @@ func Init() {
     initSubmitPages()
     
     InitMarkdownPages()
+    
+    InitUserPages()
+    
+    InitArticlePages()
     
     iris.Get("/", func(c *iris.Context) {
         msg, _ := c.GetFlash("message")
@@ -94,143 +99,6 @@ func Init() {
             })
         }
     })("landing")
-
-    iris.Get("/article/:id", func(c *iris.Context) {
-        id, err := c.ParamInt64("id")
-        if err != nil {
-            c.EmitError(iris.StatusNotFound)
-        } else {
-            msg, _ := c.GetFlash("message")
-            art, ok := db.GetArticle(isLoggedIn(c), getUserID(c), id)
-            if !ok {
-                c.EmitError(iris.StatusNotFound)
-            } else {
-                c.Render("article.html", struct {
-                    Title, Message, MessageType string
-                    Property Property
-                    Article db.Article
-                }{
-                    art.Title,
-                    msg,
-                    "success",
-                    getProperty(c),
-                    art,
-                })
-            }
-        }
-    })("article")
-    
-    iris.Get("/article/:id/raw", func(c *iris.Context) {
-        id, err := c.ParamInt64("id")
-        if err != nil {
-            c.EmitError(iris.StatusNotFound)
-        } else {
-            text, ok := db.GetRaw(isLoggedIn(c), getUserID(c), id)
-            if !ok {
-                c.EmitError(iris.StatusNotFound)
-            } else {
-                c.Text(iris.StatusOK, text)
-            }
-        }
-    })("raw-article")
-    
-    iris.Get("/user/:id", func(c *iris.Context) {
-       id, err := c.ParamInt64("id")
-        if err != nil {
-            c.EmitError(iris.StatusNotFound)
-        } else {
-            user, ok := db.GetUser(id)
-            if !ok {
-                c.EmitError(iris.StatusNotFound)
-            } else {
-                c.Render("user.html", struct {
-                    Title string
-                    Property Property
-                    User db.User
-                }{
-                    user.Username,
-                    getProperty(c),
-                    user,
-                })
-            }
-        }
-    })("user")
-    
-    iris.Get("/user/:id/article", func(c *iris.Context) {
-        id, err := c.ParamInt64("id")
-        if err != nil {
-            c.EmitError(iris.StatusNotFound)
-        } else {
-            formPage := c.FormValueString("page")
-            count := db.GetUserArticleCount(id, isLoggedIn(c))
-            page, b := common.ValidPagination(formPage, count, common.ArticlesPerPage)
-            if !b {
-                c.RedirectTo("user-article", id)
-            } else {
-                pages := common.Pagination(page, common.PaginationWindow, common.ArticlesPerPage, count)
-                c.Render("user.article.html", struct {
-                    Title string
-                    Property Property
-                    Articles []db.Article
-                    Page int
-                    Pages []int
-                    Increment func(int)(int)
-                    Decrement func(int)(int)
-                    Path, URL string
-                }{
-                    db.GetUsernameFromID(id) + "'s Articles",
-                    getProperty(c),
-                    db.GetUserArticles(id, isLoggedIn(c), page),
-                    page,
-                    pages,
-                    common.Increment,
-                    common.Decrement,
-                    iris.URL("user-article", id),
-                    "",
-                })
-            }
-        }
-    })("user-article")
-    
-    iris.Get("/user/:id/draft", func(c *iris.Context) {
-       id, err := c.ParamInt64("id")
-        if err != nil {
-            c.EmitError(iris.StatusNotFound)
-        } else if !isLoggedIn(c) {
-            c.EmitError(iris.StatusUnauthorized);
-        } else if id != getUserID(c) {
-            c.EmitError(iris.StatusForbidden)
-        } else {
-            count := db.GetDraftCount(id)
-            formPage := c.FormValueString("page")
-            page, b := common.ValidPagination(formPage, count, common.ArticlesPerPage)
-            if !b {
-                c.RedirectTo("draft", id)
-            } else {
-                pages := common.Pagination(page, common.PaginationWindow, common.ArticlesPerPage, count)
-                c.Render("draft.html", struct {
-                    Title string
-                    Property Property
-                    Articles []db.Article
-                    Page int
-                    Pages []int
-                    Increment func(int)(int)
-                    Decrement func(int)(int)
-                    Path, URL string
-                }{
-                    getUsername(c),
-                    getProperty(c),
-                    db.GetDraftList(getUserID(c), page),
-                    page,
-                    pages,
-                    common.Increment,
-                    common.Decrement,
-                    iris.URL("draft", id),
-                    "",
-                })
-            }
-        }
-    })("draft")
     
     iris.Get("/search", func(c *iris.Context) {
         formPage := c.FormValueString("page")

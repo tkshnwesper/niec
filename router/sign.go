@@ -84,6 +84,7 @@ func initSignPages() {
                 "Username",
                 25,
                 "",
+                true,
             },
             {
                 "password",
@@ -91,6 +92,7 @@ func initSignPages() {
                 "Retype password",
                 -1,
                 "",
+                true,
             },
             {
                 "url",
@@ -98,6 +100,7 @@ func initSignPages() {
                 "Display picture URL (Optional)",
                 255,
                 "",
+                true,
             },
             {
                 "url",
@@ -105,16 +108,29 @@ func initSignPages() {
                 "Website (Optional)",
                 255,
                 "",
+                true,
+            },
+        }
+        cb := []Checkbox {
+            {
+                "Public profile",
+                "privacy",
+                "public",
+                "If your profile is public, it can be viewed without logging in",
+                "globe",
+                false,
             },
         }
         c.Render("sign.up.next.html", struct{
             Title string
             Property Property
             Fields []Field
+            Checkboxes []Checkbox
         }{
             "Niec :: Sign Up - Next",
             getProperty(c),
             Fields,
+            cb,
         })
     })("signup-next")
     
@@ -124,7 +140,11 @@ func initSignPages() {
         dp := c.FormValueString("dp")
         retype := c.FormValueString("retype")
         website := c.FormValueString("website")
-        
+        privacy := c.FormValueString("privacy")
+        pub := false
+        if privacy == "public" {
+            pub = true
+        }
         if c.Session().GetString("password") != retype {
             c.RedirectTo("password-mismatch")
         } else if db.CheckUsernameExists(username) {
@@ -139,6 +159,7 @@ func initSignPages() {
                 dp,
                 bio,
                 website,
+                pub,
             ) {
                 c.EmitError(iris.StatusInternalServerError)
             } else {
@@ -187,6 +208,7 @@ func renderSign(c *iris.Context, title, action string) {
             "Email Address",
             255,
             "",
+            true,
         },
         {
             "password",
@@ -194,6 +216,7 @@ func renderSign(c *iris.Context, title, action string) {
             "Password",
             -1,
             "",
+            true,
         },
     }
     c.Render("sign.html", struct{

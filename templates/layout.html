@@ -16,7 +16,7 @@
     <body>
         {{ $p := .Property }}
         <div id="top-container">
-            <nav class="navbar navbar-inverse navbar-static-top">
+            <nav class="navbar navbar-default navbar-static-top">
                 <div class="container-fluid">
                     <div class="navbar-header">
                         <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse-id" aria-expanded="false" aria-controls="navbar">
@@ -70,18 +70,36 @@
 
                 </div> <!-- /.container-fluid -->
             </nav>
-            
+
             <div id="relative-container">
-                
+
                 <div id="flex-container">
-            
+
                     <div id="app">
 {{ yield }}
                     </div>
-                    
+
                     <footer>
-                        <div class="container">
-                            Sticky footer content
+                        <div id="footer-flex" class="container">
+                            <div id="footer-main" class="row">
+                                <div class="col-sm-6 col-md-3">
+                                </div>
+                                <div class="col-sm-6 col-md-3">
+                                </div>
+                                <div class="col-sm-6 col-md-3">
+                                </div>
+                                <div class="col-sm-6 col-md-3">
+                                </div>
+                            </div>
+                            <div id="footer-bottom" class="row">
+                                <div>
+                                    Made with <span class="glyphicon glyphicon-heart" style="color:red;"></span> by <a href="https://twitter.com/PhantomBKB">@PhantomBKB</a>.
+                                </div>
+                                <div class='flex-grow'></div>
+                                <div>
+                                    Contribute to the project on <a href="https://github.com/tkshnwesper/niec">GitHub</a>.
+                                </div>
+                            </div>
                         </div>
                     </footer>
                 </div>

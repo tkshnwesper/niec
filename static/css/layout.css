@@ -11,7 +11,14 @@
 
 html, body {
     height: 100%;
-    /*background-color:;*/
+}
+
+body {
+    background: url("/static/image/bg.jpeg");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-attachment: fixed;
 }
 
 #flex-container {
@@ -22,16 +29,54 @@ html, body {
     left: 0px;
     top: 0px;
     width: 100%;
-    height: auto;
 }
 
 #app {
     flex-grow: 0;
+    padding: 20px;
+    background-color: rgba(255, 255, 255, 0.6);
 }
 
 footer {
-    margin-top: 40px;
+    position: relative;
     flex-grow: 1;
-    background-color: lightblue;
     padding: 20px 0;
+    color: white;
+}
+
+#footer-flex {
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+#footer-main {
+    background-color: rgba(100, 100, 255, 0.6);
+    flex-grow: 1;
+    padding: 20px 10px;
+}
+
+#footer-bottom a {
+    color: white;
+    text-decoration: underline;
+}
+
+#footer-bottom {
+    background-color: rgba(100, 100, 255, 0.6);
+    padding: 20px 10px;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.flex-grow {
+    flex-grow: 1;
+}
+
+article {
+    word-wrap: break-word;
 }
