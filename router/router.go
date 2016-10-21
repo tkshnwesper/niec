@@ -54,50 +54,50 @@ func Init() {
     iris.Get("/", func(c *iris.Context) {
         msg, _ := c.GetFlash("message")
         typ, _ := c.GetFlash("messageType")
-        if isLoggedIn(c) {
-            formPage := c.FormValueString("page")
-            count := db.GetArticleCount()
-            page, b := common.ValidPagination(formPage, count, common.ArticlesPerPage)
-            if !b {
-                c.RedirectTo("landing")
-            } else {
-                pages := common.Pagination(page, common.PaginationWindow, common.ArticlesPerPage, count)
-                c.Render("home.html", struct {
-                    Title string
-                    Property Property
-                    Articles []db.Article
-                    Page int
-                    Pages []int
-                    Increment func(int)(int)
-                    Decrement func(int)(int)
-                    Path, URL, Message, MessageType string
-                }{
-                    "Niec :: Home",
-                    getProperty(c),
-                    db.GetLatestArticles(page),
-                    page,
-                    pages,
-                    common.Increment,
-                    common.Decrement,
-                    "landing",
-                    "",
-                    msg,
-                    typ,
-                })
-            }
+        // if isLoggedIn(c) {
+        formPage := c.FormValueString("page")
+        count := db.GetArticleCount(isLoggedIn(c))
+        page, b := common.ValidPagination(formPage, count, common.ArticlesPerPage)
+        if !b {
+            c.RedirectTo("landing")
         } else {
-            c.Render("index.html", struct {
+            pages := common.Pagination(page, common.PaginationWindow, common.ArticlesPerPage, count)
+            c.Render("home.html", struct {
                 Title string
                 Property Property
-                Message string
-                MessageType string
+                Articles []db.Article
+                Page int
+                Pages []int
+                Increment func(int)(int)
+                Decrement func(int)(int)
+                Path, URL, Message, MessageType string
             }{
-                "Welcome to Niec!",
+                "Niec :: Home",
                 getProperty(c),
+                db.GetLatestArticles(page, isLoggedIn(c)),
+                page,
+                pages,
+                common.Increment,
+                common.Decrement,
+                "landing",
+                "",
                 msg,
                 typ,
             })
         }
+        // } else {
+        //     c.Render("index.html", struct {
+        //         Title string
+        //         Property Property
+        //         Message string
+        //         MessageType string
+        //     }{
+        //         "Welcome to Niec!",
+        //         getProperty(c),
+        //         msg,
+        //         typ,
+        //     })
+        // }
     })("landing")
     
     iris.Get("/search", func(c *iris.Context) {

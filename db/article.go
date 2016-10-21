@@ -45,10 +45,14 @@ func getArticlesFromRows(rows *sql.Rows) []Article {
 ///////////////////////////////////////////////////////////////////////////////////////////
 
 // GetLatestArticles returns a number of recent articles
-func GetLatestArticles(page int) ([]Article) {
+func GetLatestArticles(page int, loggedin bool) ([]Article) {
+    var mid = " "
+    if !loggedin {
+        mid = " public = true and "
+    }
     offset := (page - 1) * common.ArticlesPerPage
     limit := common.ArticlesPerPage
-    prep := "select id, title, text, created_at, user_id from article where draft = false order by created_at desc limit ? offset ?"
+    prep := "select id, title, text, created_at, user_id from article where" + mid + "draft = false order by created_at desc limit ? offset ?"
     stmt, err := db.Prepare(prep)
     pe(err)
     defer stmt.Close()
@@ -60,9 +64,13 @@ func GetLatestArticles(page int) ([]Article) {
 
 
 // GetArticleCount counts the total number of articles present in the article table
-func GetArticleCount() int64 {
+func GetArticleCount(loggedin bool) int64 {
     var num int64
-    err := db.QueryRow("select count(*) from article where draft = false").Scan(&num)
+    var mid = " "
+    if !loggedin {
+        mid = " public = true and "
+    }
+    err := db.QueryRow("select count(*) from article where" + mid + "draft = false").Scan(&num)
     pe(err)
     return num
 }

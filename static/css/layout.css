@@ -73,6 +73,13 @@ footer {
     flex-wrap: wrap;
 }
 
+.footer-item {
+    display: block;
+    color: #D4CF6A;
+    padding: 10px;
+    text-align: center;
+}
+
 .flex-grow {
     flex-grow: 1;
 }
