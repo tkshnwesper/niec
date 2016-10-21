@@ -199,6 +199,8 @@ func getCreds(c *iris.Context) (bool, string, string) {
 }
 
 func renderSign(c *iris.Context, title, action string) {
+    c.SetHeader("Cache-Control", "no-store, must-revalidate, max-age=0")
+    c.SetHeader("Pragma", "no-cache");
     capid := captcha.New()
     c.Session().Set("capid", capid)
     Fields := []Field {

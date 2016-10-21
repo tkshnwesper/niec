@@ -10,7 +10,7 @@ Well folks, you might have noticed that articles use a special type of scripting
 
 I am sure you have heard of headings in HTML (you guessed right, that's another kind of language. Markdown transpiles into HTML... If you are not sure what that means, it's absolutely OK! This deserves an article of its own :)).
 
-It is completely alright if you are new to HTML or any of these weird languages that geeks like to invent, but in short HTML headings are: **H1**, **H2**, **H3**, **H4**, **H5** and **H6** denoted by `<Hx>` or `<hx>` where x is from 1 to 6. Where **H1** is the largest in size and **H6** the smallest. I hope you have got the jist of it!
+It is completely alright if you are new to HTML or any of these weird languages that geeks like to invent, but in short HTML headings are: **H1**, **H2**, **H3**, **H4**, **H5** and **H6** denoted by `<Hx>` or `<hx>` where `x` can be anything from 1 to 6. Where **H1** is the largest in size and **H6** the smallest. I hope you have got the jist of it!
 
 So, this is how you express headings in Markdown:
 
@@ -79,3 +79,27 @@ Output:
 **This makes text bold** Normal text
 
 __but so does this!__
+
+Next up, *Italics*!
+
+```
+*Similar trick*
+
+_except with just one astrick!_
+```
+
+Translates to:
+
+*Similar trick*
+
+_except with just one astrick!_
+
+And finally, ~~strikethrough~~
+
+```
+~~cut in half~~
+```
+
+Output:
+
+~~cut in half~~
