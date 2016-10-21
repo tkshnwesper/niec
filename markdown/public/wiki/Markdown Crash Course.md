@@ -1,0 +1,81 @@
+# A Crash Course in Markdown
+
+---
+
+Well folks, you might have noticed that articles use a special type of scripting language for styling. This magical language is called **Markdown**! It involves converting patterns in *ordinary* text into 'styled' text. So here we go, I'll be laying down a few tips on how to express yourself using this language.
+
+## Headings
+
+---
+
+I am sure you have heard of headings in HTML (you guessed right, that's another kind of language. Markdown transpiles into HTML... If you are not sure what that means, it's absolutely OK! This deserves an article of its own :)).
+
+It is completely alright if you are new to HTML or any of these weird languages that geeks like to invent, but in short HTML headings are: **H1**, **H2**, **H3**, **H4**, **H5** and **H6** denoted by `<Hx>` or `<hx>` where x is from 1 to 6. Where **H1** is the largest in size and **H6** the smallest. I hope you have got the jist of it!
+
+So, this is how you express headings in Markdown:
+
+```
+# Heading 1 or H1
+
+## Heading 2
+
+### H3
+
+#### Grows smaller...
+
+##### ... and even more smaller
+
+###### And Voila! The tiniest size :3
+```
+
+Here is how that actually looks,
+
+# Heading 1 or H1
+
+## Heading 2
+
+### H3
+
+#### Grows smaller...
+
+##### ... and even more smaller
+
+###### And Voila! The tiniest size :3
+
+Alright! So now you know how to use different headings, let us take a look at how to use a Horizontal rule.
+
+## Horizontal rule
+
+---
+
+In HTML a Horizontal rule is created by the `<hr>` tag. In Markdown we use hyphens. You can use as many as you like, but 3 will suffice.
+
+```
+### This is a heading
+
+---
+```
+
+Output:
+
+### This is a heading
+
+---
+
+## Emphasis
+
+---
+
+Another interesting feature is the ability to make text bold, italic or even strikethrough text. To make text bold, you can put the text between `**` or `__` (two underscores). Let us check out an example:
+
+```
+**This makes text bold** Normal text
+
+__but so does this!__
+```
+
+Output:
+
+**This makes text bold** Normal text
+
+__but so does this!__

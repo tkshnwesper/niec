@@ -5,11 +5,12 @@ import (
     "github.com/kataras/iris"
     "html/template"
     "io/ioutil"
+    "strings"
 )
 
 // Markdown is a container for markdown files
 type Markdown struct {
-    Path, FileName, Title string
+    Path, FileName, Title, Link string
     Public bool
 }
 
@@ -47,7 +48,7 @@ func renderDir(n, pre string, pub bool) {
         name := i.Name()
         if name[len(name) - 2:] == "md" {
             pages[name] = Markdown {
-                pre, name, i.Name()[: len(name) - 2], pub,
+                pre, name, name[: len(name) - 3], strings.Join(strings.Split(name, " "), ""),  pub,
             }
         } else {
             var exp string
@@ -59,8 +60,8 @@ func renderDir(n, pre string, pub bool) {
             renderDir(n, exp, pub)
         }
     }
-    for s, mk := range pages {
-        iris.Handle("GET", "/" + mk.Path + s, mk)(s)
+    for _, mk := range pages {
+        iris.Handle("GET", "/" + mk.Path + mk.Link, mk)(mk.Link)
     }
 }
 
