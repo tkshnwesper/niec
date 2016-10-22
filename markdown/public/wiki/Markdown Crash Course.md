@@ -4,6 +4,8 @@
 
 Well folks, you might have noticed that articles use a special type of scripting language for styling. This magical language is called **Markdown**! It involves converting patterns in *ordinary* text into 'styled' text. So here we go, I'll be laying down a few tips on how to express yourself using this language.
 
+Before you begin, it would be good to let you know that the Markdown compiler that we use is called [blackfriday](https://github.com/russross/blackfriday). It is quite different from say for example GitHub's Markdown compiler. But nevertheless, with some tweaking and hacking you can perform all the functions of a markdown compiler and more!
+
 ## Headings
 
 ---
@@ -125,7 +127,91 @@ An ordered list can be written as follows:
 Output:
 
 1. This is an ordered list
- 1. Here is subitem 1.
+ 1. Here is subitem 1
  2. Notice the indentation. It can be anything, one space, two spaces or one tab, etc.
 2. And another List
  1. Yet another subitem
+ 
+Unordered lists can be defined as follows:
+ 
+``` markdown
+* Here is a bullet
+ * indented one
+* Yet another ordinary bullet
+ * yet another indent
+  * indent further...
+* now, snap out of it! :D
+```
+
+Here is the output:
+
+* Here is a bullet
+ * indented one
+* Yet another ordinary bullet
+ * yet another indent
+* and back...
+
+It appears that on our Markdown compiler supports indentation upto one level only :(
+Though, that is not something I would lose sleep over :D
+
+## Links
+
+---
+
+Links are quite simple to use in Markdown even if they might look a bit intimidating! Using a link or an URL in HTML consists of two parts, the first being the text that a person sees when they see a link and of course the link's destination.
+
+```
+[Link #1](https://google.com)
+
+[Link to Niec's Homepage](/)
+
+[A link reference][ha! I am just a reference]
+
+[References can be numbers as well!][1]
+
+References are pretty cool! You can reuse them quite easily.
+
+[ha! I am just a reference]: https://mozilla.org
+[1]: http://reddit.com
+```
+
+Output:
+
+[Link #1](https://google.com)
+
+[Link to Niec's Homepage](/)
+
+[A link reference][ha! I am just a reference]
+
+[References can be numbers as well!][1]
+
+References are pretty cool! You can reuse them.
+
+[ha! I am just a reference]: https://mozilla.org
+[1]: http://reddit.com
+
+## Images
+
+---
+
+Here is a feature that most people would like to use in their articles: inserting images! To be honest, it is a lot like using Links, only slightly different. The place where the name of the link went, we use alternate text here in images (in case the image doesn't load).
+
+```
+Image without reference
+![Kitty cat](/static/image/cat.jpeg)
+
+With reference
+![Adorable little chicken][ref]
+
+[ref]: /static/image/chicks.jpg
+```
+
+Output looks like:
+
+Image without reference
+![Kitty cat](/static/image/cat.jpeg)
+
+With reference
+![Adorable little chicken][ref]
+
+[ref]: /static/image/chicks.jpg
