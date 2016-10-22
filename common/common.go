@@ -14,6 +14,7 @@ import (
     "time"
     "fmt"
     "strconv"
+    "regexp"
 )
 
 // PaginationWindow is the number of numbers that you will be able to see at any point in time
@@ -42,7 +43,9 @@ func Pe(err error) bool {
 
 // GetMarkdown returns the HTML translation of markdown code
 func GetMarkdown(s string) string {
-    return bluemonday.UGCPolicy().Sanitize(string(blackfriday.MarkdownCommon([]byte(s))))
+    p := bluemonday.UGCPolicy()
+    p.AllowAttrs("class").Matching(regexp.MustCompile("^language-[a-zA-Z0-9]+$")).OnElements("code")
+    return p.Sanitize(string(blackfriday.MarkdownCommon([]byte(s))))
 }
 
 // ReadMD reads and returns text from the markdown directory

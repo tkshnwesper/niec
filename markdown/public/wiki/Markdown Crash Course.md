@@ -14,7 +14,7 @@ It is completely alright if you are new to HTML or any of these weird languages 
 
 So, this is how you express headings in Markdown:
 
-```
+``` markdown
 # Heading 1 or H1
 
 ## Heading 2
@@ -50,7 +50,7 @@ Alright! So now you know how to use different headings, let us take a look at ho
 
 In HTML a Horizontal rule is created by the `<hr>` tag. In Markdown we use hyphens. You can use as many as you like, but 3 will suffice.
 
-```
+``` markdown
 ### This is a heading
 
 ---
@@ -68,7 +68,7 @@ Output:
 
 Another interesting feature is the ability to make text bold, italic or even strikethrough text. To make text bold, you can put the text between `**` or `__` (two underscores). Let us check out an example:
 
-```
+``` markdown
 **This makes text bold** Normal text
 
 __but so does this!__
@@ -82,7 +82,7 @@ __but so does this!__
 
 Next up, *Italics*!
 
-```
+``` markdown
 *Similar trick*
 
 _except with just one astrick!_
@@ -96,10 +96,36 @@ _except with just one astrick!_
 
 And finally, ~~strikethrough~~
 
-```
+``` markdown
 ~~cut in half~~
 ```
 
 Output:
 
 ~~cut in half~~
+
+Now let us look at lists.
+
+## Lists
+
+---
+
+Lists can be both ordered and unordered.
+
+An ordered list can be written as follows:
+
+``` markdown
+1. This is an ordered list
+ 1. Here is subitem 1.
+ 2. Notice the indentation. It can be anything, one space, two spaces or one tab, etc.
+2. And another List
+ 1. Yet another subitem
+```
+
+Output:
+
+1. This is an ordered list
+ 1. Here is subitem 1.
+ 2. Notice the indentation. It can be anything, one space, two spaces or one tab, etc.
+2. And another List
+ 1. Yet another subitem
