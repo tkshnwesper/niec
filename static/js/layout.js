@@ -1,17 +1,11 @@
 $(document).ready(function() {
     hljs.initHighlightingOnLoad();
-    emojify.setConfig({
-        emojify_tag_type : 'div',           // Only run emojify.js on this element
-        only_crawl_id    : null,            // Use to restrict where emojify.js applies
-        img_dir          : '/static/bower_components/emojify.js/dist/images/basic',  // Directory for emoji images
-        ignored_tags     : {                // Ignore the following tags
-            'SCRIPT'  : 1,
-            'TEXTAREA': 1,
-            'A'       : 1,
-            'PRE'     : 1,
-            'CODE'    : 1
-        }
-    });
-    emojify.run();
+    $("#app").html(emojione.toImage($("#app").html()));
     $('[data-toggle="tooltip"]').tooltip();
-})
+    $('article table').each(function() {
+        $(this).addClass("table table-bordered table-hover");
+    });
+    $('article img').each(function() {
+        $(this).addClass("img-responsive center-block");
+    })
+});
