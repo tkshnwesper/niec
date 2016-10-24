@@ -43,7 +43,23 @@ func Pe(err error) bool {
 
 // GetMarkdown returns the HTML translation of markdown code
 func GetMarkdown(s string) string {
-    p := bluemonday.UGCPolicy()
+    p := bluemonday.NewPolicy()
+    // Permits the "dir", "id", "lang", "title" attributes globally
+    p.AllowStandardAttributes()
+
+    // Permits the "img" element and it's standard attributes
+    p.AllowImages()
+
+    // Permits ordered and unordered lists, and also definition lists
+    p.AllowLists()
+
+    // Permits HTML tables and all applicable elements and non-styling attributes
+    p.AllowTables()
+    p.AddTargetBlankToFullyQualifiedLinks(true)
+    p.AllowDataURIImages()
+    p.RequireNoFollowOnLinks(true)
+    p.AllowRelativeURLs(true)
+    p.AllowElements("pre", "blockquote", "p", "h1", "h2", "h3", "h4", "h5", "h6", "hr")
     p.AllowAttrs("class").Matching(regexp.MustCompile("^language-[a-zA-Z0-9]+$")).OnElements("code")
     return p.Sanitize(string(blackfriday.MarkdownCommon([]byte(s))))
 }

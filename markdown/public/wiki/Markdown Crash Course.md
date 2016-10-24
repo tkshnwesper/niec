@@ -358,3 +358,9 @@ Here's what it looks like:
 Let me quote an article about The Left Hand of Darkness from Wikipedia:
 
 > The Left Hand of Darkness is a science fiction novel by Ursula K. Le Guin (pictured), published in 1969. It became immensely popular, winning both the Hugo and Nebula Awards, and establishing Le Guin as a major author of science fiction.
+
+</div>
+
+This clears up most of the discussion on Markdown. I used this [article](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet) on GitHub as a reference to creating this tutorial.
+
+</div>
