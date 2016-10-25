@@ -28,3 +28,5 @@ First, let me explain **Public** and **Private** profiles. As a general rule on 
 Public and Private **articles** play along the same lines, just that instead of Profiles it is about Articles: public, visible to everybody; private, visible only to logged in members.
 
 **Drafts** play an important role in saving an article on the server that is still _work in progress_. Drafts are saved as they are, without any changes made by the server to them while saving so you can save them without worrying about inconsistensies :yin_yang:.
+
+Only you can edit your profile and see your drafts. Once an article has been marked as a draft, it will not be visible to anybody else except you. You may save an article as draft even after publishing it, after which the same rules apply as before: it will be visible only to you.
