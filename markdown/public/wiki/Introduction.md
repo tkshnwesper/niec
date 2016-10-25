@@ -8,3 +8,4 @@ Hello all! This is the wiki of Niec which talks about the different features ava
 
 1. [The simple stuff](/wiki/TheSimpleStuff.md)
 2. [A Crash Course in Markdown](/wiki/MarkdownCrashCourse.md)
+3. [Using Emojis](/wiki/UsingEmojis.md)

@@ -55,11 +55,13 @@ func GetMarkdown(s string) string {
 
     // Permits HTML tables and all applicable elements and non-styling attributes
     p.AllowTables()
+    p.AllowStandardURLs()
     p.AddTargetBlankToFullyQualifiedLinks(true)
     p.AllowDataURIImages()
     p.RequireNoFollowOnLinks(true)
     p.AllowRelativeURLs(true)
-    p.AllowElements("pre", "blockquote", "p", "h1", "h2", "h3", "h4", "h5", "h6", "hr")
+    p.AllowAttrs("href").OnElements("a")
+    p.AllowElements("pre", "blockquote", "p", "h1", "h2", "h3", "h4", "h5", "h6", "hr", "strong", "em", "del")
     p.AllowAttrs("class").Matching(regexp.MustCompile("^language-[a-zA-Z0-9]+$")).OnElements("code")
     return p.Sanitize(string(blackfriday.MarkdownCommon([]byte(s))))
 }
