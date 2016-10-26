@@ -30,3 +30,5 @@ Public and Private **articles** play along the same lines, just that instead of 
 **Drafts** play an important role in saving an article on the server that is still _work in progress_. Drafts are saved as they are, without any changes made by the server to them while saving so you can save them without worrying about inconsistensies :yin_yang:.
 
 Only you can edit your profile and see your drafts. Once an article has been marked as a draft, it will not be visible to anybody else except you. You may save an article as draft even after publishing it, after which the same rules apply as before: it will be visible only to you.
+
+I am sure you would have noticed the search bar on the navigation bar on top :thumbsup:. The search will search articles based on the **title** and the **body** of the article. The search results are shown in descending order of the time at which they were created. The same rules of public and private articles apply here as well. For a person who has not logged in, the search will only yield public articles, and you know the rest.
