@@ -15,7 +15,7 @@ func InitUserPages() {
         if err != nil {
             c.EmitError(iris.StatusNotFound)
         } else {
-            user, ok := db.GetUser(id)
+            user, ok := db.GetUser(id, isLoggedIn(c))
             if !ok {
                 c.EmitError(iris.StatusNotFound)
             } else {

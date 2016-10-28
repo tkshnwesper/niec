@@ -80,11 +80,15 @@ func VerifyEmail(id int64, hash string) bool {
 }
 
 // GetUser returns a user object of the specified username
-func GetUser(id int64) (User, bool) {
+func GetUser(id int64, loggedin bool) (User, bool) {
     var text string
     var user User
+    var mid = " "
+    if !loggedin {
+        mid = " public = true and "
+    }
     user.ID = id
-    err := db.QueryRow("select username, bio, dp, created_at, website from user where id = ?", id).Scan(
+    err := db.QueryRow("select username, bio, dp, created_at, website from user where" + mid + "id = ?", id).Scan(
         &user.Username,
         &text,
         &user.DP,
