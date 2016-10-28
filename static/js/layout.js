@@ -1,7 +1,7 @@
 $(document).ready(function() {
     hljs.initHighlightingOnLoad();
     $("article").each(function() {
-        $(this).html(emojione.toImage($("#app").html()));
+        $(this).html(emojione.toImage($(this).html()));
     });
     $('[data-toggle="tooltip"]').tooltip();
     $('article table').each(function() {
