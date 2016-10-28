@@ -8,7 +8,9 @@ import (
     "github.com/microcosm-cc/bluemonday"
     "github.com/russross/blackfriday"
     "io/ioutil"
-    "github.com/iris-contrib/mail"
+    // "github.com/iris-contrib/mail"
+    mail "github.com/kataras/go-mailer"
+    // "net/smtp"
     "math/rand"
     "crypto/md5"
     "time"
@@ -29,6 +31,12 @@ var ConfigObject Config
 
 // MailService provides feature to send mail
 var MailService mail.Service
+
+// Authentication stores Auth obj
+// var Authentication smtp.Auth
+
+// MailData stores mail data
+// var MailData ConfigSMTP
 
 // Pe returns whether an error is real or not and prints output if it is
 // false if there is error
@@ -82,16 +90,25 @@ func Init() {
 }
 
 func initMail() {
-    var smtp = ConfigObject.SMTP
+    // MailData = ConfigObject.SMTP
+    // data := MailData
+    smtp := ConfigObject.SMTP
     var config = mail.Config {
         Host: smtp.Host,
         Username: smtp.Username,
+        FromAddr: smtp.Username + "@" + smtp.Host,
         Password: smtp.Password,
         Port: smtp.Port,
         FromAlias: smtp.FromAlias,
     }
     MailService = mail.New(config)
+    // Authentication = smtp.PlainAuth("", data.Username, data.Password, data.Host)
 }
+
+// SendMail sends mail
+// func SendMail(to []string, msg string) {
+//     smtp.SendMail(MailData.Host+":25", Authentication, MailData.Username+"@"+MailData.Host, to, []byte(msg))
+// }
 
 // StrShuffle shuffles a string that is passed to it
 func StrShuffle(str string) string {

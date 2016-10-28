@@ -61,6 +61,7 @@ func InsertUser(
     pe(err3)
     mail := common.GetMarkdown(buf.String())
     common.MailService.Send("Welcome to Niec!", mail, email)
+    // common.SendMail([]string{email}, mail)
     return a && b
 }
 

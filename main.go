@@ -23,5 +23,4 @@ func main() {
 	db.Init()
 	iris.Listen(":8081")
 	// iris.Go()
-	
 }
