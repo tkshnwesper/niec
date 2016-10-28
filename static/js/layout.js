@@ -1,6 +1,8 @@
 $(document).ready(function() {
     hljs.initHighlightingOnLoad();
-    $("#app").html(emojione.toImage($("#app").html()));
+    $("article").each(function() {
+        $(this).html(emojione.toImage($("#app").html()));
+    });
     $('[data-toggle="tooltip"]').tooltip();
     $('article table').each(function() {
         $(this).addClass("table table-bordered table-hover");
